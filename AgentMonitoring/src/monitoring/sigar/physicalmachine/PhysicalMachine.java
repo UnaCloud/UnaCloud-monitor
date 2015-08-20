@@ -1,4 +1,4 @@
-package physicalmachine;
+package monitoring.sigar.physicalmachine;
 
 import static com.losandes.utils.Constants.*;
 

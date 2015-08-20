@@ -1,6 +1,6 @@
 package monitoring.monitors;
 
-import connection.MonitorDatabaseConnection;
+import monitoring.configuration.InterfaceSensorConfiguration;
 import enums.MonitoringStatus;
 
 /** 
@@ -26,21 +26,25 @@ public abstract class AbstractMonitor implements Runnable{
 	protected String recordPath;
 	
 	/**
-	 * Time to reduces the first execution
-	 */
-	protected long reduce;
-	/**
 	 * Status of monitoring process; Check MonitoringStatus Enum to more info
 	 */
 	private MonitoringStatus status;
-	/**
-	 * Connection to DB from Agent
-	 */
-	protected MonitorDatabaseConnection connection;
 	
-	protected AbstractMonitor(MonitorDatabaseConnection con) throws Exception {		
+	/**
+	 * ID of sensor
+	 */
+	private String ID;
+	
+	/**
+	 * Class to control variables to configure sensor
+	 * @throws Exception
+	 */
+	protected InterfaceSensorConfiguration configuration;	
+	
+	protected AbstractMonitor(String id, InterfaceSensorConfiguration conf) throws Exception {	
+		ID = id;
 		status = MonitoringStatus.DISABLE;
-		connection = con;
+		this.configuration=conf;
 	}
 	
 	@Override
@@ -49,7 +53,7 @@ public abstract class AbstractMonitor implements Runnable{
 		try {
 			if(recordPath!=null){
 				status = MonitoringStatus.RUNNING;
-				System.out.println("Lets work for "+windowSizeTime);
+				System.out.println("Let's work for "+windowSizeTime);
 				doMonitoring();
 				doFinal();
 				if(status==MonitoringStatus.RUNNING)status=MonitoringStatus.INIT;
@@ -63,39 +67,50 @@ public abstract class AbstractMonitor implements Runnable{
 		if(status==MonitoringStatus.RUNNING)status = MonitoringStatus.STOPPED;
 		else if(status==MonitoringStatus.ERROR)status = MonitoringStatus.OFF;
 	}
-	public void toEnable(String record)throws Exception{
-		if(!isDisable())return;
-		if(record==null)throw new Exception("record path is missing");
+	private void toEnable(String record){
+		if(!isDisable()){System.out.println(ID+" service is disable");return;}
+		if(record==null||record.isEmpty()){
+			System.err.println("There is not a record path configured");
+			this.status = MonitoringStatus.DISABLE;
+			return;
+		}
 		recordPath=record;
 		this.status = MonitoringStatus.OFF;
 	}
-	public void offToInit(int frecuency, int window, int time){
+	private void offToInit(int frecuency, int window){		
 		if(!isOff())return;
-		if(updateVariables(frecuency, window, time))		
+		if(updateVariables(frecuency, window))		
 		    status = MonitoringStatus.INIT;		
 	}
-	public void toDisable(){
+	protected void toDisable(){
 		if(isOff())status = MonitoringStatus.DISABLE;
 	}
 	public void toOff(){
 		if(isStopped())status = MonitoringStatus.OFF;
 	}
 	public void toError() {
+		if(isDisable())return;
 		this.status = MonitoringStatus.ERROR;
 	}
-	public boolean updateVariables(int frecuency, int window, int time){
+	protected boolean updateVariables(int frecuency, int window){
 		if(frecuency>0&&window>0&&frecuency<window){	
 			this.frecuency = frecuency; 
 		    this.windowSizeTime = window;
-			this.reduce = time;
 		    return true;		
 		}	
 		System.out.println("Frecuency is greater than window");
 		return false;
 	}
+	public boolean updateSensor(int frecuency, int window){
+		if(updateVariables(frecuency, window)){
+			configuration.setFrecuency(frecuency);
+			return true;
+		}
+		return false;
+	}
 	public void setRecordPath(String recordPath) {
 		this.recordPath = recordPath;
-	}
+	}	
 	/**
      * Do initial task to control monitoring
      * @throws Exception 
@@ -111,9 +126,12 @@ public abstract class AbstractMonitor implements Runnable{
 	 */
 	public abstract void doFinal() throws Exception;
 	/**
-	 * Unified send error method to communicate when process has failed
+	 * Unified send error method to communicate when process has failed	 * 
+	 * Override this method if it is necessary for your sensor
 	 */
-	public abstract void sendError(Exception e);
+	public void sendError(Exception e){
+		toError();
+	}
 	/**
 	 * check frequency in seconds
 	 */
@@ -126,9 +144,9 @@ public abstract class AbstractMonitor implements Runnable{
 	public int getWindowSizeTime() {
 		return windowSizeTime;
 	}
-	public long getReduce() {
-		return reduce;
-	}
+	/**
+	 * @return path to record logs
+	 */
 	public String getRecordPath() {
 		return recordPath;
 	}
@@ -149,9 +167,28 @@ public abstract class AbstractMonitor implements Runnable{
 	}
 	public boolean isOff(){
 		return status==MonitoringStatus.OFF;
-	}
-	
+	}	
 	public MonitoringStatus getStatus(){
 		return status;
+	}	
+	public String getId(){
+		return ID;
 	}
+	/**
+	 * Method used to configure sensor running time
+	 * Override this method if it is necessary for your sensor
+	 * @throws Exception
+	 */
+	public void init(int time) {
+		offToInit(configuration.getFrecuency(), time);
+	}
+	/**
+	 * Method used to auto-configure monitoring tool
+	 * Override this method if it is necessary for your sensor
+	 * @throws Exception
+	 */
+	public void configure() {
+		toEnable(configuration.getRecordPath());
+	}
+	
 }

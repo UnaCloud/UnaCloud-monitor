@@ -1,7 +1,10 @@
-package utils;
+package monitoring.sigar;
 
 import java.util.Date;
 import java.util.HashMap;
+
+import monitoring.sigar.physicalmachine.Network;
+import monitoring.sigar.physicalmachine.PhysicalMachine;
 
 import org.hyperic.sigar.Cpu;
 import org.hyperic.sigar.CpuInfo;
@@ -14,8 +17,6 @@ import org.hyperic.sigar.cmd.SigarCommandBase;
 
 import com.losandes.utils.OperatingSystem;
 
-import physicalmachine.Network;
-import physicalmachine.PhysicalMachine;
 import reports.MonitorInitialReport;
 import reports.MonitorReport;
 
@@ -52,7 +53,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
 	 */
     private MonitorInitialReport generateInitialReport() throws SigarException {
     	//This code war removed from State Report because generate use percentage in computer.
-    	linpackJava.Linpack CPUMflops = new linpackJava.Linpack();
+    	monitoring.sigar.linpackJava.Linpack CPUMflops = new monitoring.sigar.linpackJava.Linpack();
         CPUMflops.run_benchmark();
         PhysicalMachine monitor = new PhysicalMachine();
         java.util.Date date;

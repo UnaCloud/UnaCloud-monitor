@@ -1,4 +1,4 @@
-package physicalmachine;
+package monitoring.sigar.physicalmachine;
 
 import org.hyperic.sigar.Cpu;
 import org.hyperic.sigar.CpuInfo;

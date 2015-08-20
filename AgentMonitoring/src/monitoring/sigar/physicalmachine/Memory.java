@@ -16,7 +16,7 @@
  * USA.
  */
 
-package physicalmachine;
+package monitoring.sigar.physicalmachine;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

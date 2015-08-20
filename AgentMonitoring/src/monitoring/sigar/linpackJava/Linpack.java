@@ -1,4 +1,4 @@
-package linpackJava;
+package monitoring.sigar.linpackJava;
 
 /*
 

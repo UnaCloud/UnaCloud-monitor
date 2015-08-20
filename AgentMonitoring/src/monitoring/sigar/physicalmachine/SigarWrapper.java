@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package physicalmachine;
+package monitoring.sigar.physicalmachine;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

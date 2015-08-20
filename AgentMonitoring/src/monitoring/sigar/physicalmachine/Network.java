@@ -1,4 +1,4 @@
-package physicalmachine;
+package monitoring.sigar.physicalmachine;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
