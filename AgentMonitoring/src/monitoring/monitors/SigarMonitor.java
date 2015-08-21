@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import monitoring.configuration.AbstractSigarConfiguration;
+import monitoring.configuration.SigarConfigurationInterface;
 import monitoring.sigar.LoaderDll;
 import monitoring.sigar.MonitorReportGenerator;
 
@@ -23,7 +23,7 @@ public class SigarMonitor extends AbstractMonitor {
 
 	private File currentFile;
 	
-	public SigarMonitor(String id, AbstractSigarConfiguration configuration) throws Exception {
+	public SigarMonitor(String id, SigarConfigurationInterface configuration) throws Exception {
 		super(id, configuration);		
 	}
 	    
@@ -61,7 +61,7 @@ public class SigarMonitor extends AbstractMonitor {
 	 */
 	@Override
 	public void doConfiguration() throws Exception {
-		String path = ((AbstractSigarConfiguration) configuration).getDllPath(); 				
+		String path = ((SigarConfigurationInterface) configuration).getDllPath(); 				
 		if(path==null||path.isEmpty())throw new Exception("There is not a DLL path configured");
 		else new LoaderDll(path).loadLibrary();		
 	}
@@ -71,7 +71,7 @@ public class SigarMonitor extends AbstractMonitor {
 		File folder = new File(recordPath);
 		for (File file : folder.listFiles()) {
 			if(file.isFile()&&file.getName().startsWith(ID)){
-				file.renameTo(new File(recordPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(new Date())+EXT));
+				file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(new Date())+EXT));
 			}
 		}
 	}

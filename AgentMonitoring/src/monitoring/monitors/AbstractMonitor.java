@@ -26,7 +26,10 @@ public abstract class AbstractMonitor implements Runnable{
 	 * file path to record data
 	 */
 	protected String recordPath;
-	
+	/**
+	 * file path to save pickup files
+	 */
+	protected String pickUpPath;
 	/**
 	 * Status of monitoring process; Check MonitoringStatus Enum to more info
 	 */
@@ -116,28 +119,28 @@ public abstract class AbstractMonitor implements Runnable{
 	 * Override this method if it is necessary for your sensor
 	 * @throws Exception
 	 */
-	public void configure(String recordPath) {
+	public void configure(String pickupPath) {
 		try {
 			doConfiguration();
-			toEnable(recordPath);
+			toEnable(configuration.getRecordPath(),pickupPath);
 		} catch (Exception e) {
 			System.out.println("Error in "+ID+" configuration");
 			System.out.println(e.getMessage());
 		}		
-	}
-	
+	}	
 	
 	public void toStop(){
 		if(status==MonitoringStatus.RUNNING)status = MonitoringStatus.STOPPED;
 		else if(status==MonitoringStatus.ERROR)status = MonitoringStatus.OFF;
 	}
-	private void toEnable(String record) throws Exception{
+	private void toEnable(String record, String pickUp) throws Exception{
 		if(!isDisable()){System.out.println(ID+" service is disable");return;}
-		if(record==null||record.isEmpty()){
+		if(record==null||record.isEmpty()||pickUp==null||pickUp.isEmpty()){
 			this.status = MonitoringStatus.DISABLE;
-			throw new Exception("There is not a record path configured");
+			throw new Exception("There is not a record path or a pickup path configured");
 		}
 		recordPath=record;
+		pickUpPath = pickUp;
 		this.status = MonitoringStatus.OFF;
 	}
 	private void offToInit(int frecuency, int window){		
