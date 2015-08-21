@@ -75,27 +75,31 @@ public abstract class AbstractMonitor implements Runnable{
 	public void doInit() throws Exception{
 		if(isReady())doInitial();
 	}
+	
 	/**
      * Do initial task to control monitoring
      * @throws Exception 
      */
 	protected abstract void doInitial() throws Exception;
+	
 	/**
 	 * Starts monitoring process
 	**/
 	protected abstract void doMonitoring() throws Exception;
+	
 	/**
 	 * Record data in Database if it is necessary
 	 * @throws Exception 
 	 */
 	protected abstract void doFinal() throws Exception;	
+	
 	/**
 	 * TODO
 	 */
 	protected abstract void setLogFileForPickUp();
 	
 	/**
-	 * Method used to configure your sensor, throws exception in case not to disable service 
+	 * Method used to configure your sensor, throws exception to disable sensor
 	 */
 	protected abstract void doConfiguration() throws Exception;
 	/**

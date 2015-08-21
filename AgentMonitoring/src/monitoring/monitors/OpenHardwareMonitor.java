@@ -43,9 +43,10 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 	@Override
 	protected void setLogFileForPickUp() {
 		File folder = new File(recordPath);
+		Date d = new Date();
 		for (File file : folder.listFiles()) {
 			if(file.isFile()&&file.getName().startsWith(log)){
-				file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(new Date())+EXT));
+				file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
 			}
 		}	
 	}
