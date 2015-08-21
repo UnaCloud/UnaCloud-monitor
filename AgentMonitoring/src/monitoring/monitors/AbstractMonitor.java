@@ -116,10 +116,10 @@ public abstract class AbstractMonitor implements Runnable{
 	 * Override this method if it is necessary for your sensor
 	 * @throws Exception
 	 */
-	public void configure() {
+	public void configure(String recordPath) {
 		try {
 			doConfiguration();
-			toEnable(null);
+			toEnable(recordPath);
 		} catch (Exception e) {
 			System.out.println("Error in "+ID+" configuration");
 			System.out.println(e.getMessage());
@@ -131,12 +131,11 @@ public abstract class AbstractMonitor implements Runnable{
 		if(status==MonitoringStatus.RUNNING)status = MonitoringStatus.STOPPED;
 		else if(status==MonitoringStatus.ERROR)status = MonitoringStatus.OFF;
 	}
-	private void toEnable(String record){
+	private void toEnable(String record) throws Exception{
 		if(!isDisable()){System.out.println(ID+" service is disable");return;}
 		if(record==null||record.isEmpty()){
-			System.err.println("There is not a record path configured");
 			this.status = MonitoringStatus.DISABLE;
-			return;
+			throw new Exception("There is not a record path configured");
 		}
 		recordPath=record;
 		this.status = MonitoringStatus.OFF;

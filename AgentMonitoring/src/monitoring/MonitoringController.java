@@ -1,6 +1,5 @@
 package monitoring;
 
-import java.util.List;
 import java.util.TreeMap;
 
 import monitoring.configuration.ControllerConfiguration;
@@ -51,7 +50,7 @@ public class MonitoringController {
 		System.out.println("Config monitoring services");			
 		TreeMap<String, Boolean> sensorStates = cm.getStateSensors(); 		 
 		for (AbstractMonitor monitor : tools.values())
-			if(sensorStates.get(monitor.getId())!=null&&sensorStates.get(monitor.getId()))monitor.configure();	
+			if(sensorStates.get(monitor.getId())!=null&&sensorStates.get(monitor.getId()))monitor.configure(null);	
 	}	
 	/**
 	 * Enabled services which has its name in parameter array
@@ -90,7 +89,7 @@ public class MonitoringController {
 		System.out.println("Enable monitoring service");
 		for (String service : services) {
 			if(tools.get(service)!=null){
-				tools.get(service).configure();
+				tools.get(service).configure(null);
 				cm.enableSensor(service);
 			}
 		}		
