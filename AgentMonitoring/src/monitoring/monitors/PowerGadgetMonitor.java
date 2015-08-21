@@ -1,8 +1,8 @@
 package monitoring.monitors;
 
+import static monitoring.MonitoringConstants.*;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.Date;
 
 import monitoring.configuration.AbstractPowerGadgetConfiguration;
@@ -19,53 +19,45 @@ import com.losandes.utils.LocalProcessExecutor;
 public class PowerGadgetMonitor extends AbstractMonitor {
 	
 	private String powerlogPath;
+	private String fileName;
 	
 	public PowerGadgetMonitor(String id, AbstractPowerGadgetConfiguration configuration) throws Exception {
 		super(id, configuration);
 	}
 	@Override
-	public void doInitial() throws Exception {
-		if(isReady())LocalProcessExecutor.executeCommand("taskkill /I /MF PowerLog3.0.exe");
+	protected void doInitial() throws Exception {
+		LocalProcessExecutor.executeCommand("taskkill /I /MF PowerLog3.0.exe");
 	}
-
+	
 	@Override
 	public void doMonitoring() throws Exception {
-		//C:\\Program Files\\Intel\\Power Gadget 3.0\\PowerLog3.0.exe
-		checkFile();
-		LocalProcessExecutor.executeCommand(powerlogPath+" -resolution "+(frecuency*1000)+" -duration "+windowSizeTime+" -file "+recordPath);
+		setLogFileForPickUp();
+		fileName = recordPath+ID+SEPARATOR+df.format(new Date())+EXT;		
+		LocalProcessExecutor.executeCommand(powerlogPath+" -resolution "+(frecuency*1000)+" -duration "+windowSizeTime+" -file "+fileName);
 		
 	}
 
 	@Override
 	public void doFinal() throws Exception{
-		cleanFile(new File(recordPath));
-		System.out.println(new Date()+(" finish power gadget"));
+		setLogFileForPickUp();
+		System.out.println(new Date()+(" finish "+ID));
 	}
-	
-	private void checkFile() throws Exception{
-		File f = new File(recordPath);
-		if(f.exists()){
-			if(f.length()>0){
-				cleanFile(f);
-			}
-		}		
-	}
-	
-	private void cleanFile(File f) throws FileNotFoundException{
-		if(f.exists()){
-			PrintWriter writer = new PrintWriter(f);
-			writer.print("");
-			writer.close();			
-		}
-    }
-
+	/**
+	 * Override due to it is necessary load dll in path to execute Sigar
+	 */
 	@Override
-	public void configure() {		
+	public void doConfiguration() throws Exception{		
 		String path = ((AbstractPowerGadgetConfiguration) configuration).getPowerPath(); 				
-		if(path==null||path.isEmpty())System.err.println("There is not a PowerGadget path configured");
-		else{
-			powerlogPath = path;
-			super.configure();
-		}		
+		if(path==null||path.isEmpty())throw new Exception("There is not a PowerGadget path configured");
+		else powerlogPath = path;
+	}
+	@Override
+	protected void setLogFileForPickUp() {
+		File folder = new File(recordPath);
+		for (File file : folder.listFiles()) {
+			if(file.isFile()&&file.getName().startsWith(ID)){
+				file.renameTo(new File(recordPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(new Date())+EXT));
+			}
+		}
 	}
 }

@@ -1,7 +1,8 @@
 package monitoring.monitors;
 
+import static monitoring.MonitoringConstants.*;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -20,29 +21,29 @@ import monitoring.sigar.MonitorReportGenerator;
 
 public class SigarMonitor extends AbstractMonitor {
 
+	private File currentFile;
 	
 	public SigarMonitor(String id, AbstractSigarConfiguration configuration) throws Exception {
 		super(id, configuration);		
 	}
 	    
 	@Override
-	public void doInitial() throws Exception{
-		if(isReady()){
-			 File f = new File(recordPath);
-			 PrintWriter pw = new PrintWriter(new FileOutputStream(f,true),true);
-		     pw.println(MonitorReportGenerator.getInstance().getInitialReport());
-		     pw.close();
-		}	     
+	protected void doInitial() throws Exception{
+		 setLogFileForPickUp();	
+		 currentFile = new File(recordPath+File.separator+ID+df.format(new Date())+EXT);
+		 PrintWriter pw = new PrintWriter(new FileOutputStream(
+				 currentFile,true),true);
+	     pw.println(MonitorReportGenerator.getInstance().getInitialReport());
+	     pw.close();
+	    
 	}
 	
 	@Override
-	public void doMonitoring() throws Exception {
-		 checkFile();
+	public void doMonitoring() throws Exception {		 
 	     int localFrecuency = 1000*frecuency;  
 	     Date d = new Date();
 	     d.setTime(d.getTime()+(windowSizeTime*1000));	
-	     File f = new File(recordPath);
-	     PrintWriter pw = new PrintWriter(new FileOutputStream(f,true),true);
+	     PrintWriter pw = new PrintWriter(new FileOutputStream(currentFile,true),true);
 	     while(d.after(new Date())){  
 	    	pw.println(MonitorReportGenerator.getInstance().getStateReport());
 	        Thread.sleep(localFrecuency);
@@ -51,45 +52,28 @@ public class SigarMonitor extends AbstractMonitor {
 	}
 	
 	@Override
-	public void doFinal() throws Exception{
-		cleanFile();
-		System.out.println(new Date()+" end cpu");
+	public void doFinal() throws Exception{		
+		setLogFileForPickUp();
+		System.out.println(new Date()+" end "+ID);
+	}
+	/**
+	 * Override due to it is necessary load dll in path to execute Sigar
+	 */
+	@Override
+	public void doConfiguration() throws Exception {
+		String path = ((AbstractSigarConfiguration) configuration).getDllPath(); 				
+		if(path==null||path.isEmpty())throw new Exception("There is not a DLL path configured");
+		else new LoaderDll(path).loadLibrary();		
 	}
 
 	@Override
-	public void sendError(Exception e) {
-		toError();
-	}	
-	
-	private void checkFile() throws Exception{
-		File f = new File(recordPath);
-		if(!f.exists())f.createNewFile();
-		else{
-			if(f.length()>0){
-				cleanFile();
+	protected void setLogFileForPickUp() {
+		File folder = new File(recordPath);
+		for (File file : folder.listFiles()) {
+			if(file.isFile()&&file.getName().startsWith(ID)){
+				file.renameTo(new File(recordPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(new Date())+EXT));
 			}
 		}
-	}	
-	 
-	private void cleanFile() throws FileNotFoundException{
-		File f = new File(recordPath);
-		PrintWriter writer = new PrintWriter(f);
-		writer.print("");
-		writer.close();
-	}
-	 
-	@Override
-	public void configure() {
-		try {
-			String path = ((AbstractSigarConfiguration) configuration).getDllPath(); 				
-			if(path==null||path.isEmpty())System.err.println("There is not a DLL path configured");
-			else{
-				new LoaderDll(path).loadLibrary();
-				super.configure();
-			}				
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
 	}
 
 }

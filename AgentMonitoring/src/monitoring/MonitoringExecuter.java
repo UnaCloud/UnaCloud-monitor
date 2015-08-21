@@ -12,7 +12,7 @@ public class MonitoringExecuter extends Thread{
 	public void run() {	
 		for (AbstractMonitor monitor : monitors) {
 			try {
-				monitor.doInitial();
+				monitor.doInit();
 			} catch (Exception e) {
 				e.printStackTrace();
 				monitor.toError();

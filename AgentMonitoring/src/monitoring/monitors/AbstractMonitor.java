@@ -1,5 +1,7 @@
 package monitoring.monitors;
 
+import java.text.SimpleDateFormat;
+
 import monitoring.configuration.InterfaceSensorConfiguration;
 import enums.MonitoringStatus;
 
@@ -33,13 +35,17 @@ public abstract class AbstractMonitor implements Runnable{
 	/**
 	 * ID of sensor
 	 */
-	private String ID;
+	protected String ID;	 
 	
+	/**
+	 * Date format to manage files
+	 */
+	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
 	/**
 	 * Class to control variables to configure sensor
 	 * @throws Exception
 	 */
-	protected InterfaceSensorConfiguration configuration;	
+	protected InterfaceSensorConfiguration configuration;		
 	
 	protected AbstractMonitor(String id, InterfaceSensorConfiguration conf) throws Exception {	
 		ID = id;
@@ -63,6 +69,64 @@ public abstract class AbstractMonitor implements Runnable{
 			sendError(e);
 		}		
 	}
+	public void doInit() throws Exception{
+		if(isReady())doInitial();
+	}
+	/**
+     * Do initial task to control monitoring
+     * @throws Exception 
+     */
+	protected abstract void doInitial() throws Exception;
+	/**
+	 * Starts monitoring process
+	**/
+	protected abstract void doMonitoring() throws Exception;
+	/**
+	 * Record data in Database if it is necessary
+	 * @throws Exception 
+	 */
+	protected abstract void doFinal() throws Exception;	
+	/**
+	 * TODO
+	 */
+	protected abstract void setLogFileForPickUp();
+	
+	/**
+	 * Method used to configure your sensor, throws exception in case not to disable service 
+	 */
+	protected abstract void doConfiguration() throws Exception;
+	/**
+	 * Unified send error method to communicate when process has failed	 * 
+	 * Override this method if it is necessary for your sensor
+	 */
+	public void sendError(Exception e){
+		toError();
+	}
+
+	/**
+	 * Method used to configure sensor running time
+	 * Override this method if it is necessary for your sensor
+	 * @throws Exception
+	 */
+	public void init(int time) {
+		offToInit(configuration.getFrecuency(), time);
+	}
+	/**
+	 * Method used to auto-configure monitoring tool
+	 * Override this method if it is necessary for your sensor
+	 * @throws Exception
+	 */
+	public void configure() {
+		try {
+			doConfiguration();
+			toEnable(null);
+		} catch (Exception e) {
+			System.out.println("Error in "+ID+" configuration");
+			System.out.println(e.getMessage());
+		}		
+	}
+	
+	
 	public void toStop(){
 		if(status==MonitoringStatus.RUNNING)status = MonitoringStatus.STOPPED;
 		else if(status==MonitoringStatus.ERROR)status = MonitoringStatus.OFF;
@@ -108,30 +172,7 @@ public abstract class AbstractMonitor implements Runnable{
 		}
 		return false;
 	}
-	public void setRecordPath(String recordPath) {
-		this.recordPath = recordPath;
-	}	
-	/**
-     * Do initial task to control monitoring
-     * @throws Exception 
-     */
-	public abstract void doInitial() throws Exception;
-	/**
-	 * Starts monitoring process
-	**/
-	public abstract void doMonitoring() throws Exception;
-	/**
-	 * Record data in Database if it is necessary
-	 * @throws Exception 
-	 */
-	public abstract void doFinal() throws Exception;
-	/**
-	 * Unified send error method to communicate when process has failed	 * 
-	 * Override this method if it is necessary for your sensor
-	 */
-	public void sendError(Exception e){
-		toError();
-	}
+		
 	/**
 	 * check frequency in seconds
 	 */
@@ -150,6 +191,11 @@ public abstract class AbstractMonitor implements Runnable{
 	public String getRecordPath() {
 		return recordPath;
 	}
+	
+	public void setRecordPath(String recordPath) {
+		this.recordPath = recordPath;
+	}	
+	
 	public boolean isRunning(){
 		return status==MonitoringStatus.RUNNING;
 	}
@@ -174,21 +220,4 @@ public abstract class AbstractMonitor implements Runnable{
 	public String getId(){
 		return ID;
 	}
-	/**
-	 * Method used to configure sensor running time
-	 * Override this method if it is necessary for your sensor
-	 * @throws Exception
-	 */
-	public void init(int time) {
-		offToInit(configuration.getFrecuency(), time);
-	}
-	/**
-	 * Method used to auto-configure monitoring tool
-	 * Override this method if it is necessary for your sensor
-	 * @throws Exception
-	 */
-	public void configure() {
-		toEnable(configuration.getRecordPath());
-	}
-	
 }
