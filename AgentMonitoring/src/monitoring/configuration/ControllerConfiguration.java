@@ -17,6 +17,6 @@ public abstract class ControllerConfiguration{
 	 */
 	public abstract TreeMap<String, Boolean> getStateSensors();
 	public abstract int getMonitoringTime();
-	public abstract int setMonitoringTime(int window);
+	public abstract void setMonitoringTime(int window);
 	public abstract void enableSensor(String service);
 }

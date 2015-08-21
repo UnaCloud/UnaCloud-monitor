@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -13,7 +12,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 import monitoring.MonitoringController;
 
@@ -26,17 +24,14 @@ public class MonitoringCommunication extends Thread{
 
 	private final int RESEND_TRIES = 3;
 
-	private int port;
 	private MonitoringController controller;
 	private ServerSocket serverSocket;
 	private BufferedReader reader;
 	private OutputStream out; 
 
 	public MonitoringCommunication(int port, MonitoringController controller) throws IOException {
-		this.port = port;
 		this.controller = controller;
 		serverSocket = new ServerSocket(port);
-		System.out.println(Base64.encode((getHash(new File("C:\\Users\\Administrador\\Desktop\\hashme.txt")))));
 	}
 
 	@Override

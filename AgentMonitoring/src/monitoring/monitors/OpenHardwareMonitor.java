@@ -5,6 +5,7 @@ import static monitoring.MonitoringConstants.PICKUP;
 import static monitoring.MonitoringConstants.SEPARATOR;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Date;
 
 import com.losandes.utils.LocalProcessExecutor;
@@ -16,9 +17,9 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 
 	private String openHardwareProcess;
 
-	private final String log = "OpenHardwareMonitorLog";
+	private final String LOG = "OpenHardwareMonitorLog";
 	
-	protected OpenHardwareMonitor(String id, InterfaceSensorConfiguration conf)	throws Exception {
+	public OpenHardwareMonitor(String id, InterfaceSensorConfiguration conf)	throws Exception {
 		super(id, conf);
 	}
 
@@ -43,11 +44,15 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 	@Override
 	protected void setLogFileForPickUp() {
 		File folder = new File(recordPath);
-		Date d = new Date();
-		for (File file : folder.listFiles()) {
-			if(file.isFile()&&file.getName().startsWith(log)){
-				file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
+		FilenameFilter filtro = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith(LOG);
 			}
+		};
+		Date d = new Date();
+		for (File file : folder.listFiles(filtro)) {
+			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
 		}	
 	}
 

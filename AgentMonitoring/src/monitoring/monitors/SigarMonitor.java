@@ -4,6 +4,7 @@ import static monitoring.MonitoringConstants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.util.Date;
 
@@ -70,10 +71,14 @@ public class SigarMonitor extends AbstractMonitor {
 	protected void setLogFileForPickUp() {
 		File folder = new File(recordPath);
 		Date d = new Date();
-		for (File file : folder.listFiles()) {
-			if(file.isFile()&&file.getName().startsWith(ID)){
-				file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
+		FilenameFilter filtro = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith(ID);
 			}
+		};
+		for (File file : folder.listFiles(filtro)) {
+			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
 		}
 	}
 

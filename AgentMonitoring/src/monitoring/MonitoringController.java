@@ -2,11 +2,14 @@ package monitoring;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TreeMap;
 
 import monitoring.configuration.ControllerConfiguration;
 import monitoring.monitors.AbstractMonitor;
 import enums.MonitoringStatus;
+import static monitoring.MonitoringConstants.*;
 
 /**
  * 
@@ -144,7 +147,7 @@ public class MonitoringController {
 		FilenameFilter filtro = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.startsWith("PICKUP-");
+				return name.startsWith(PICKUP+SEPARATOR);
 			}
 		};
 		
@@ -157,10 +160,22 @@ public class MonitoringController {
 		FilenameFilter filtro = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.startsWith("PICKUP-"+service);
+				return name.startsWith(PICKUP+SEPARATOR+service);
 			}
 		};
 		
 		return pickups.listFiles(filtro);
+	}
+	
+	public boolean sendFilesToDone(final File file){
+	    try {
+	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
+	    	String newName = file.getName().substring(file.getName().indexOf(SEPARATOR), file.getName().length());
+	    	file.renameTo(new File(donePath+DONE+SEPARATOR+newName+df.format(new Date())+EXT));		
+	    	return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }
