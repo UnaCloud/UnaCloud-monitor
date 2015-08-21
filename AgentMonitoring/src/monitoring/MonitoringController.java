@@ -1,10 +1,11 @@
 package monitoring;
 
+import java.util.List;
 import java.util.TreeMap;
 
-import enums.MonitoringStatus;
 import monitoring.configuration.ControllerConfiguration;
 import monitoring.monitors.AbstractMonitor;
+import enums.MonitoringStatus;
 
 /**
  * 
@@ -119,5 +120,9 @@ public class MonitoringController {
 	public MonitoringStatus getStatusService(String service){
 		if(tools.get(service)!=null)return tools.get(service).getStatus();	
 		return null;
+	}
+	
+	public String[] getServicesNames() {
+		return tools.keySet().toArray(new String[1]);
 	}
 }
