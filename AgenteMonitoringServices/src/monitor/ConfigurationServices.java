@@ -141,7 +141,7 @@ public class ConfigurationServices {
 				
 				@Override
 				public String getPowerPath() {
-					return prop.getProperty("PG_RECORD_PATH");
+					return prop.getProperty("PG_POWER_PATH");
 				}
 
 				@Override
