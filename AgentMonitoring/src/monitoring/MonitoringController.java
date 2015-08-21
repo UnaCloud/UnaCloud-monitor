@@ -1,5 +1,7 @@
 package monitoring;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.TreeMap;
 
 import monitoring.configuration.ControllerConfiguration;
@@ -20,7 +22,7 @@ public class MonitoringController {
 	 * Group of monitoring sensors 
 	 */
 	private TreeMap<String, AbstractMonitor> tools = new TreeMap<String, AbstractMonitor>();
-	
+
 	/**
 	 * Configuration class
 	 */
@@ -30,6 +32,17 @@ public class MonitoringController {
 	 * Execute in a cycle all services enabled
 	 */
 	private MonitoringExecuter c;	
+
+	/**
+	 * Path to folder where the files to be picked up are stored
+	 */
+	private String pickUpPath;
+	
+	/**
+	 * Path to folder were file that were picked up are temporarily stored
+	 */
+	private String donePath;
+	
 	
 	public MonitoringController(ControllerConfiguration configurationClass){
 		cm = configurationClass;
@@ -120,8 +133,34 @@ public class MonitoringController {
 		if(tools.get(service)!=null)return tools.get(service).getStatus();	
 		return null;
 	}
-	
+
 	public String[] getServicesNames() {
 		return tools.keySet().toArray(new String[1]);
+	}
+
+	public File[] getPickupFiles(){
+		File pickups = new File(pickUpPath);
+		
+		FilenameFilter filtro = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith("PICKUP-");
+			}
+		};
+		
+		return pickups.listFiles(filtro);
+	}
+
+	public File[] getPickupFiles(final String service){
+		File pickups = new File(pickUpPath);
+		
+		FilenameFilter filtro = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith("PICKUP-"+service);
+			}
+		};
+		
+		return pickups.listFiles(filtro);
 	}
 }
