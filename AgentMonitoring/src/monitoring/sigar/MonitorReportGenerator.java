@@ -23,15 +23,9 @@ import reports.MonitorReport;
 public class MonitorReportGenerator extends SigarCommandBase {
 	
 	private static MonitorReportGenerator instance;
-	public static synchronized MonitorReportGenerator getInstance(){
-		
+	public static synchronized MonitorReportGenerator getInstance(){		
 		if(instance==null)instance=new MonitorReportGenerator();
 		return instance;
-	}
-		
-   // private static String UUID = java.util.UUID.randomUUID().toString();
-    public MonitorReportGenerator() {    	
-		//System.out.println( System.getProperty("java.library.path"));
 	}
     /**
      * Refactor. This method execute the initialReport method 
@@ -144,7 +138,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
         long[] pids = instance.sigar.getProcList();
         for (long id : pids) {
             try {
-            	 String[] processName = instance.sigar.getProcExe(id).getName().split("\\\\");
+            	String[] processName = instance.sigar.getProcExe(id).getName().split("\\\\");
                 processes += "(name:"+processName[processName.length - 1] + "; virtualMemorySize:"+instance.sigar.getProcMem(id).getSize()+"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"+(id==pids[pids.length-1]?"":",");
             } catch (Exception ex) {
             }
