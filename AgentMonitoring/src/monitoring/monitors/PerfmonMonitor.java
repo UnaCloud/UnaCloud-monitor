@@ -27,6 +27,7 @@ public class PerfmonMonitor extends AbstractMonitor{
 	protected void doInitial() throws Exception {		
 		//TODO delete counter
 		LocalProcessExecutor.executeCommand("logman stop "+counterName);
+		LocalProcessExecutor.executeCommand("logman delete "+counterName);
 		String countersString = "";
 		for (String c : counters)countersString.concat("\""+c+"\" ");
 		LocalProcessExecutor.executeCommand("logman create counter "+ counterName +" -c "+ countersString +"-si "
