@@ -37,7 +37,7 @@ public class PerfmonMonitor extends AbstractMonitor{
 	@Override
 	protected void doMonitoring() throws Exception {
 		LocalProcessExecutor.executeCommand("logman start "+counterName);
-		Thread.sleep(windowSizeTime);
+		Thread.sleep(windowSizeTime*1000);
 		LocalProcessExecutor.executeCommand("logman stop "+counterName);	
 	}
 

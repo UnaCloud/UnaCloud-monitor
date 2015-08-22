@@ -1,5 +1,7 @@
 package monitor;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -23,7 +25,7 @@ public class ConfigurationServices {
 		try {
 			prop = new Properties();
 			String propFileName = "config.properties";
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+			InputStream inputStream = new FileInputStream(new File(propFileName));
 			prop.load(inputStream);
 			
 			controllerConfig = new ControllerConfiguration() {
@@ -50,6 +52,16 @@ public class ConfigurationServices {
 				
 				@Override
 				public void enableSensor(String service) {}
+
+				@Override
+				public String getPickUpPath() {
+					return prop.getProperty("PICK_UP_PATH");
+				}
+
+				@Override
+				public String getDonePath() {
+					return prop.getProperty("DONE_PATH");
+				}
 			};
 			
 			ohConfig =  new OpenHardwareConfigurationInterface() {
@@ -87,7 +99,7 @@ public class ConfigurationServices {
 				}
 				
 				@Override
-				public String getDllPath() {					
+				public String getDllPath() {	
 					return prop.getProperty("DLL_PATH");
 				}
 			};

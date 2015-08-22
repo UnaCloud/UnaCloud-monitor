@@ -19,4 +19,6 @@ public abstract class ControllerConfiguration{
 	public abstract int getMonitoringTime();
 	public abstract void setMonitoringTime(int window);
 	public abstract void enableSensor(String service);
+	public abstract String getPickUpPath();
+	public abstract String getDonePath();
 }

@@ -32,7 +32,7 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 	@Override
 	protected void doMonitoring() throws Exception {
 		LocalProcessExecutor.createProcess(recordPath+openHardwareProcess);
-		Thread.sleep(windowSizeTime);
+		Thread.sleep(windowSizeTime*1000);
 		LocalProcessExecutor.killProcess(openHardwareProcess);	
 	}
 

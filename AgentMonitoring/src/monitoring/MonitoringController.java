@@ -49,6 +49,8 @@ public class MonitoringController {
 	
 	public MonitoringController(ControllerConfiguration configurationClass){
 		cm = configurationClass;
+		pickUpPath = cm.getPickUpPath();
+		donePath = cm.getDonePath();
 	}
 	/**
 	 * Adding monitor to controller
@@ -65,8 +67,10 @@ public class MonitoringController {
 	public void configureServices(){		
 		System.out.println("Config monitoring services");			
 		TreeMap<String, Boolean> sensorStates = cm.getStateSensors(); 		 
-		for (AbstractMonitor monitor : tools.values())
-			if(sensorStates.get(monitor.getId())!=null&&sensorStates.get(monitor.getId()))monitor.configure(null);	
+		for (AbstractMonitor monitor : tools.values()){
+			System.out.println(monitor.getId()+" added");
+			if(sensorStates.get(monitor.getId())!=null&&sensorStates.get(monitor.getId()))monitor.configure(pickUpPath);	
+		}
 	}	
 	/**
 	 * Enabled services which has its name in parameter array
@@ -79,13 +83,24 @@ public class MonitoringController {
 			if(tools.get(string)!=null)tools.get(string).init(time);		
 	}
 	/**
+	 * Enabled all services which has its name in parameter array
+	 * @param services
+	 */
+	public void prepareAllServices(){	
+		System.out.println("Start monitoring services");		
+		int time = cm.getMonitoringTime();
+		for (AbstractMonitor monitor : tools.values()) 
+			monitor.init(time);		
+	}
+	/**
 	 * Method to execute services which are configured and ready to run. 
 	 * To understand services status check MonitoringStatus Enum
 	 */
 	public void startServices(){
 		if(c==null)c = new MonitoringExecuter();
-		for (AbstractMonitor monitor : tools.values())
-			if(monitor.isReady())c.addMonitor(monitor);					
+		for (AbstractMonitor monitor : tools.values()) {
+			if(monitor.isReady())c.addMonitor(monitor);	
+		}
 		if(!c.isAlive())c.start();	
 	}
 	/**
@@ -105,7 +120,7 @@ public class MonitoringController {
 		System.out.println("Enable monitoring service");
 		for (String service : services) {
 			if(tools.get(service)!=null){
-				tools.get(service).configure(null);
+				tools.get(service).configure(pickUpPath);
 				cm.enableSensor(service);
 			}
 		}		

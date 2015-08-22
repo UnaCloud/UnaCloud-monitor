@@ -31,7 +31,7 @@ public class SigarMonitor extends AbstractMonitor {
 	@Override
 	protected void doInitial() throws Exception{
 		 setLogFileForPickUp();	
-		 currentFile = new File(recordPath+File.separator+ID+df.format(new Date())+EXT);
+		 currentFile = new File(recordPath+File.separator+ID+SEPARATOR+df.format(new Date())+EXT);
 		 PrintWriter pw = new PrintWriter(new FileOutputStream(
 				 currentFile,true),true);
 	     pw.println(MonitorReportGenerator.getInstance().getInitialReport());

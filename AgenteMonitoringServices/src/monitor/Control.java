@@ -37,7 +37,8 @@ public class Control {
 			controller.addMonitoringTool(new OpenHardwareMonitor(MonitoringToolEnum.OPEN_HARDWARE.getName(), config.ohConfig));
 			controller.addMonitoringTool(new PerfmonMonitor(MonitoringToolEnum.PERFMON.getName(), config.perfomConfig));			
 			MonitoringCommunication com = new MonitoringCommunication(PORT, controller);			
-			controller.configureServices();
+			controller.configureServices();//TODO unir 		
+			controller.prepareAllServices();
 			controller.startServices();
 			com.start();
 			
