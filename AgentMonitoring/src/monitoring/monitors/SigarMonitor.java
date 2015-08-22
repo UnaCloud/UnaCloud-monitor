@@ -4,7 +4,6 @@ import static monitoring.MonitoringConstants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.util.Date;
 
@@ -16,8 +15,8 @@ import monitoring.sigar.MonitorReportGenerator;
  * @author Cesar
  * 
  * This class represent a process to monitoring CPU with Sigar library. To monitoring cpu, it uses the library Sigar by Hyperic and has three processes;
- * Do initial: to validate if there are files to record in database and delete those files, Do Monitoring: to sense cpu and record in a file, and Do final: to record en db
- * This class has been only tested in Windows OS
+ * Do initial: to validate if there are files to be pickUp by system and rename those files, Do Monitoring: to sense cpu and record in a file, 
+ * and Do final: to change the name and move them to pickUp folder
  */
 
 public class SigarMonitor extends AbstractMonitor {
@@ -30,7 +29,7 @@ public class SigarMonitor extends AbstractMonitor {
 	    
 	@Override
 	protected void doInitial() throws Exception{
-		 setLogFileForPickUp();	
+		 setLogFileForPickUp(ID);	
 		 currentFile = new File(recordPath+File.separator+ID+SEPARATOR+df.format(new Date())+EXT);
 		 PrintWriter pw = new PrintWriter(new FileOutputStream(
 				 currentFile,true),true);
@@ -54,7 +53,7 @@ public class SigarMonitor extends AbstractMonitor {
 	
 	@Override
 	public void doFinal() throws Exception{		
-		setLogFileForPickUp();
+		setLogFileForPickUp(ID);
 		System.out.println(new Date()+" end "+ID);
 	}
 	/**
@@ -67,19 +66,5 @@ public class SigarMonitor extends AbstractMonitor {
 		else new LoaderDll(path).loadLibrary();		
 	}
 
-	@Override
-	protected void setLogFileForPickUp() {
-		File folder = new File(recordPath);
-		Date d = new Date();
-		FilenameFilter filtro = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.startsWith(ID);
-			}
-		};
-		for (File file : folder.listFiles(filtro)) {
-			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
-		}
-	}
 
 }

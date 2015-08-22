@@ -1,18 +1,16 @@
 package monitoring.monitors;
 
-import static monitoring.MonitoringConstants.EXT;
-import static monitoring.MonitoringConstants.PICKUP;
-import static monitoring.MonitoringConstants.SEPARATOR;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Date;
-
 import com.losandes.utils.LocalProcessExecutor;
 
 import monitoring.configuration.OpenHardwareConfigurationInterface;
 import monitoring.configuration.InterfaceSensorConfiguration;
 
+/** 
+ * @author CesarF and FiveDots
+ * This class represents a sensor process to monitoring cpu performance. It uses the application Open Hardware Monitor. 
+ * It has three process; * Do initial: kill process openHardware, then it validates if there are files to be pickUp by system and rename then. 
+ * Do Monitoring: execute the process OpenHardwareMonitor, and Do final: rename last file to be pick up.
+ */
 public class OpenHardwareMonitor extends AbstractMonitor{
 
 	private String openHardwareProcess;
@@ -26,7 +24,7 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 	@Override
 	protected void doInitial() throws Exception {		
 		LocalProcessExecutor.killProcess(openHardwareProcess);	
-		setLogFileForPickUp();
+		setLogFileForPickUp(LOG);
 	}
 
 	@Override
@@ -38,22 +36,7 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 
 	@Override
 	protected void doFinal() throws Exception {
-		setLogFileForPickUp();
-	}
-
-	@Override
-	protected void setLogFileForPickUp() {
-		File folder = new File(recordPath);
-		FilenameFilter filtro = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.startsWith(LOG);
-			}
-		};
-		Date d = new Date();
-		for (File file : folder.listFiles(filtro)) {
-			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));
-		}	
+		setLogFileForPickUp(LOG);
 	}
 
 	@Override

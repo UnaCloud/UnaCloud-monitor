@@ -1,9 +1,6 @@
 package monitoring.monitors;
 
 import static monitoring.MonitoringConstants.*;
-
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Date;
 
 import monitoring.configuration.PowerGadgetConfigurationInterface;
@@ -12,9 +9,9 @@ import com.losandes.utils.LocalProcessExecutor;
 
 /** 
  * @author Cesar
- * This class represents a process to monitoring Energy in CPU. To monitoring energy, it uses the application Power Gadget by Intel in particular the application PowerLog3.0, and it has three process;
- * Do initial: to validate if there are files to record in database and delete those files, also stop the power log process in case it's running. Do Monitoring: execute the process PowerLog3.0.exe to sense energy and record it in a file, and Do final: to record en db
- * This class only work in Windows
+ * This class represents a process to monitoring Energy consumed by cpu. To monitoring energy, it uses the application Power Gadget by Intel in particular the application PowerLog. 
+ * It has three process; * Do initial: to validate if there are files to be pickUp by system and rename those files, also stop the power log process in case it's running. 
+ * Do Monitoring: execute the process PowerLog to sense energy and record it in a file, and Do final: rename last file be pick up.
  */
 
 public class PowerGadgetMonitor extends AbstractMonitor {
@@ -28,7 +25,7 @@ public class PowerGadgetMonitor extends AbstractMonitor {
 	}
 	@Override
 	protected void doInitial() throws Exception {
-		setLogFileForPickUp();
+		setLogFileForPickUp(ID);
 		//"PowerLog3.0.exe"
 		LocalProcessExecutor.killProcess(exeName);
 	}
@@ -41,7 +38,7 @@ public class PowerGadgetMonitor extends AbstractMonitor {
 
 	@Override
 	public void doFinal() throws Exception{
-		setLogFileForPickUp();
+		setLogFileForPickUp(ID);
 		System.out.println(new Date()+(" finish "+ID));
 	}
 	/**
@@ -55,20 +52,5 @@ public class PowerGadgetMonitor extends AbstractMonitor {
 		p = ((PowerGadgetConfigurationInterface) configuration).getExeName(); 				
 		if(p==null||p.isEmpty())throw new Exception("There is not a PowerGadget path configured");
 		else exeName = p;
-	}
-	@Override
-	protected void setLogFileForPickUp() {
-		
-		File folder = new File(recordPath);
-		FilenameFilter filtro = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.startsWith(ID);
-			}
-		};		
-		Date d = new Date();
-		for (File file : folder.listFiles(filtro)) {			
-			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));			
-		}
 	}
 }

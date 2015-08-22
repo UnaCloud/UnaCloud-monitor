@@ -1,6 +1,13 @@
 package monitoring.monitors;
 
+import static monitoring.MonitoringConstants.EXT;
+import static monitoring.MonitoringConstants.PICKUP;
+import static monitoring.MonitoringConstants.SEPARATOR;
+
+import java.io.File;
+import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import monitoring.configuration.InterfaceSensorConfiguration;
 import enums.MonitoringStatus;
@@ -94,9 +101,23 @@ public abstract class AbstractMonitor implements Runnable{
 	protected abstract void doFinal() throws Exception;	
 	
 	/**
-	 * TODO
+	 * Move all sensor files to pickUp folder. 
+	 * All files that start with name parameter are renamed with word PICKUP_ at beginning and move them to pickup folder
 	 */
-	protected abstract void setLogFileForPickUp();
+	protected void setLogFileForPickUp(final String startFileName){
+		File folder = new File(recordPath);		
+		FilenameFilter filtro = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith(startFileName);
+			}
+		};
+		Date d = new Date();
+		for (File file : folder.listFiles(filtro)) {
+			String fileName = file.getName().replace(EXT, "");
+			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+fileName+SEPARATOR+df.format(d)+EXT));
+		}
+	}
 	
 	/**
 	 * Method used to configure your sensor, throws exception to disable sensor

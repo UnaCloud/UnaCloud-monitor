@@ -1,11 +1,6 @@
 package monitoring.monitors;
 
-import static monitoring.MonitoringConstants.EXT;
-import static monitoring.MonitoringConstants.PICKUP;
 import static monitoring.MonitoringConstants.SEPARATOR;
-
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Date;
 
 import com.losandes.utils.LocalProcessExecutor;
@@ -13,6 +8,12 @@ import com.losandes.utils.LocalProcessExecutor;
 import monitoring.configuration.InterfaceSensorConfiguration;
 import monitoring.configuration.PerfmonMonitorConfiguration;
 
+/** 
+ * @author CesarF and FiveDots
+ * This class represents a sensor process to monitoring cpu performance. It uses the application Perfmon on windows OS. 
+ * It has three process; * Do initial: stop and delete the Logman counter (in case it is running), configure new Logman counter, and validates if there are files to be pickUp by system and rename then. 
+ * Do Monitoring: execute Logman counter, and Do final: rename last file to be pick up.
+ */
 public class PerfmonMonitor extends AbstractMonitor{
 	
 	private String counterName;
@@ -24,15 +25,14 @@ public class PerfmonMonitor extends AbstractMonitor{
 	}
 
 	@Override
-	protected void doInitial() throws Exception {		
-		//TODO delete counter
+	protected void doInitial() throws Exception {	
 		LocalProcessExecutor.executeCommand("logman stop "+counterName);
 		LocalProcessExecutor.executeCommand("logman delete "+counterName);
 		String countersString = "";
 		for (String c : counters)countersString.concat("\""+c+"\" ");
 		LocalProcessExecutor.executeCommand("logman create counter "+ counterName +" -c "+ countersString +"-si "
 						+ frecuency +" -max "+ maxFileSizeMb +" -f csv -o \""+ (recordPath+ID+SEPARATOR+df.format(new Date())) +"\"");	
-		setLogFileForPickUp();
+		setLogFileForPickUp(ID);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class PerfmonMonitor extends AbstractMonitor{
 
 	@Override
 	protected void doFinal() throws Exception {
-		setLogFileForPickUp();
+		setLogFileForPickUp(ID);
 	}	
 
 	@Override
@@ -58,21 +58,6 @@ public class PerfmonMonitor extends AbstractMonitor{
 		int maxSize = ((PerfmonMonitorConfiguration) configuration).getMaxFileSize(); 				
 		if(p==null||p.isEmpty())throw new Exception("There is not a perfomn max size file configured");
 		maxFileSizeMb = maxSize;
-	}
-
-	@Override
-	protected void setLogFileForPickUp() {
-		File folder = new File(recordPath);
-		FilenameFilter filtro = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.startsWith(ID);
-			}
-		};
-		Date d = new Date();
-		for (File file : folder.listFiles(filtro)) {						
-			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+file.getName()+SEPARATOR+df.format(d)+EXT));			
-		}
 	}
 
 }
