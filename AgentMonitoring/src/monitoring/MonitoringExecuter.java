@@ -5,9 +5,18 @@ import java.util.Date;
 
 import monitoring.monitors.AbstractMonitor;
 
+/**
+ * 
+ * @author CesarF
+ * Class to control execution of monitors. This executor runs all enabled services in a cycle.
+ */
 public class MonitoringExecuter extends Thread{
 
+	/**
+	 * List of AbstractMonitors to execute
+	 */
 	ArrayList<AbstractMonitor> monitors = new ArrayList<AbstractMonitor>();
+	
 	@Override
 	public void run() {	
 		for (AbstractMonitor monitor : monitors) {
@@ -36,10 +45,20 @@ public class MonitoringExecuter extends Thread{
 		for (AbstractMonitor monitor : monitors)
 			if(monitor.isStopped())monitor.toOff();
 	}
+	/**
+	 * Add a unique abstracMonitor to executor. It method compare AbstractMonitor id´s to certify than a sensor running only one time.
+	 * @param monitor to be added
+	 * 
+	 */
 	public void addMonitor(AbstractMonitor monitor){
-		//TODO check that is not a equal monitoring added
+		for (AbstractMonitor abstractMonitor : monitors)
+			if(monitor.getId().equals(abstractMonitor.getId()))return;		
 		monitors.add(monitor);
 	}
+	/**
+	 * 
+	 * @return true in case there is at least one monitor ready to run.
+	 */
 	public boolean isReady(){
 		for (AbstractMonitor abstractMonitor : monitors) {
 			if(abstractMonitor.isReady())return true;

@@ -33,7 +33,7 @@ public class PowerGadgetMonitor extends AbstractMonitor {
 	@Override
 	public void doMonitoring() throws Exception {		
 		fileName = recordPath+ID+SEPARATOR+df.format(new Date())+EXT;		
-		LocalProcessExecutor.executeCommand(powerlogPath+exeName+" -resolution "+(frecuency*1000)+" -duration "+windowSizeTime+" -file "+fileName);		
+		LocalProcessExecutor.executeCommand(powerlogPath+exeName+" -resolution "+(frequency*1000)+" -duration "+windowSizeTime+" -file "+fileName);		
 	}
 
 	@Override

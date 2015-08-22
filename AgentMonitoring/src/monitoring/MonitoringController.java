@@ -13,7 +13,7 @@ import static monitoring.MonitoringConstants.*;
 
 /**
  * 
- * @author Cesar
+ * @author CesarF
  *
  * This class allows to control a list of monitoring services. 
  * first of all set values and connection variable 
@@ -46,7 +46,10 @@ public class MonitoringController {
 	 */
 	private String donePath;
 	
-	
+	/**
+	 * 
+	 * @param configurationClass: configuration interface used to configurate controller
+	 */
 	public MonitoringController(ControllerConfiguration configurationClass){
 		cm = configurationClass;
 		pickUpPath = cm.getPickUpPath();
@@ -127,11 +130,11 @@ public class MonitoringController {
 	}
 	/**
 	 * Update services referenced in array, if all services referenced can be updated, it update process control time
-	 * @param frecuency
-	 * @param windowSize
-	 * @param services
+	 * @param frecuency: in seconds
+	 * @param windowSize: in seconds
+	 * @param services: name services
 	 */
-	public void updateServices(int frecuency, int windowSize, String... services){
+	public void updateServices(int frecuency, int windowSize, String[] services){
 		if(windowSize<=0||frecuency<=0)return;
 		System.out.println("Update monitoring service");		
 		for (String service : services) {
@@ -143,19 +146,22 @@ public class MonitoringController {
 		cm.setMonitoringTime(windowSize);		
 	}
 	/**
-	 * Return the status of a service
 	 * @param service: name of service
-	 * @return
+	 * @return status of a service
 	 */
 	public MonitoringStatus getStatusService(String service){
 		if(tools.get(service)!=null)return tools.get(service).getStatus();	
 		return null;
 	}
-
+	/**
+	 * @return services names in controller list
+	 */
 	public String[] getServicesNames() {
 		return tools.keySet().toArray(new String[1]);
 	}
-
+	/**
+	 * @return list of files of all services to be pickup by system
+	 */
 	public File[] getPickupFiles(){
 		File pickups = new File(pickUpPath);
 		
@@ -168,7 +174,11 @@ public class MonitoringController {
 		
 		return pickups.listFiles(filtro);
 	}
-
+	/**
+	 * 
+	 * @param service
+	 * @return list of files of a particular service to be pick up by system
+	 */
 	public File[] getPickupFiles(final String service){
 		File pickups = new File(pickUpPath);
 		
@@ -181,8 +191,12 @@ public class MonitoringController {
 		
 		return pickups.listFiles(filtro);
 	}
-	
-	public boolean sendFilesToDone(final File file){
+	/**
+	 * 
+	 * @param file
+	 * @return move a file to done folder.
+	 */
+	public boolean sendFileToDone(final File file){
 	    try {
 	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
 	    	String newName = file.getName().substring(file.getName().indexOf(SEPARATOR), file.getName().length());

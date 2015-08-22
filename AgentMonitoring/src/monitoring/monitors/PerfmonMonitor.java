@@ -31,7 +31,7 @@ public class PerfmonMonitor extends AbstractMonitor{
 		String countersString = "";
 		for (String c : counters)countersString.concat("\""+c+"\" ");
 		LocalProcessExecutor.executeCommand("logman create counter "+ counterName +" -c "+ countersString +"-si "
-						+ frecuency +" -max "+ maxFileSizeMb +" -f csv -o \""+ (recordPath+ID+SEPARATOR+df.format(new Date())) +"\"");	
+						+ frequency +" -max "+ maxFileSizeMb +" -f csv -o \""+ (recordPath+ID+SEPARATOR+df.format(new Date())) +"\"");	
 		setLogFileForPickUp(ID);
 	}
 

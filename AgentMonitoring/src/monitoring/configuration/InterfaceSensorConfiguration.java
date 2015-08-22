@@ -1,7 +1,9 @@
 package monitoring.configuration;
 /**
- * TODO Documentation
- * @author Cesar
+ * 
+ * @author CesarF
+ * 
+ * Class used as an interface to configure any sensor
  *
  */
 public interface InterfaceSensorConfiguration{

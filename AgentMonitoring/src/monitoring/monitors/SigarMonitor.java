@@ -40,7 +40,7 @@ public class SigarMonitor extends AbstractMonitor {
 	
 	@Override
 	public void doMonitoring() throws Exception {		 
-	     int localFrecuency = 1000*frecuency;  
+	     int localFrecuency = 1000*frequency;  
 	     Date d = new Date();
 	     d.setTime(d.getTime()+(windowSizeTime*1000));	
 	     PrintWriter pw = new PrintWriter(new FileOutputStream(currentFile,true),true);

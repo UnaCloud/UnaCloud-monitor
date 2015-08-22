@@ -1,12 +1,20 @@
 package monitoring.sigar;
 
 import java.io.File;
+
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import com.losandes.utils.OperatingSystem;
 
 import monitoring.exceptions.MonitoringException;
+/**
+ * 
+ * @author CesarF
+ * 
+ * TODO Documentation
+ *
+ */
 
 public class LoaderDll {
 	
@@ -15,7 +23,7 @@ public class LoaderDll {
 	private String path;
 		
 	public LoaderDll(String p) {
-		if(p==null)new Exception("DATA_PATH can't be null");
+		if(p==null)new Exception("DLL_PATH can't be null");
 		os = new OperatingSystem();
 		path = p;
 	}
