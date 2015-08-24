@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -73,7 +74,6 @@ public class MonitoringCommunication extends Thread{
 
 	private void getFile(String services) throws Exception {
 		PrintWriter writer = new PrintWriter(out);
-
 		if(services.toUpperCase().equals("ALL")) {
 			for(File file : controller.getPickupFiles()) {
 				fileProtocol(file, writer);
@@ -131,6 +131,7 @@ public class MonitoringCommunication extends Thread{
 				continue;
 			}
 
+			controller.sendFileToDone(file);
 			break;
 		}
 
@@ -177,8 +178,7 @@ public class MonitoringCommunication extends Thread{
 
 		return null;
 	}
-
 	public static void main(String[] args) throws IOException {
-		new MonitoringCommunication(7856, null);
+		new MonitoringCommunication(7856, null).start();
 	}
 }
