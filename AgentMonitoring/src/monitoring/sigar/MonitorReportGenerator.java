@@ -3,7 +3,6 @@ package monitoring.sigar;
 import java.util.Date;
 import java.util.HashMap;
 
-import monitoring.sigar.physicalmachine.Network;
 import monitoring.sigar.physicalmachine.PhysicalMachine;
 
 import org.hyperic.sigar.Cpu;
@@ -16,6 +15,7 @@ import org.hyperic.sigar.Uptime;
 import org.hyperic.sigar.cmd.SigarCommandBase;
 
 import com.losandes.utils.OperatingSystem;
+import com.losandes.utils.MySystem;
 
 import reports.MonitorInitialReport;
 import reports.MonitorReport;
@@ -70,7 +70,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
         }
         org.hyperic.sigar.CpuInfo CPU1 = infos[0];
         return new MonitorInitialReport(timest,date.getTime(),
-                Network.getHostname().toUpperCase(), CPUMflops.getMflops(),
+                MySystem.getHostname().toUpperCase(), CPUMflops.getMflops(),
                 CPUMflops.getTimeinSecs(),
                 monitor.operatingSystem.getOperatingSystemName(),
                 monitor.operatingSystem.getOperatingSystemVersion(),
@@ -150,7 +150,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
         NetInterfaceStat NET = instance.sigar
                 .getNetInterfaceStat(monitor.network.getNetworkInterface());
         return new MonitorReport(timest,date.getTime(),  
-        		OperatingSystem.getUserName(),Network.getHostname().toUpperCase(),
+        		OperatingSystem.getUserName(),MySystem.getHostname().toUpperCase(),
                 UPTIME.getUptime(), CPU2.getIdle() * 100,
                 (100 - (CPU2.getIdle() * 100)), CPU2.getUser() * 100,
                 CPU2.getSys() * 100, CPU2.getNice() * 100,
