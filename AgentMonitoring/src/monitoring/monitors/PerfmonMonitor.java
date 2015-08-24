@@ -29,7 +29,8 @@ public class PerfmonMonitor extends AbstractMonitor{
 		LocalProcessExecutor.executeCommand("logman stop "+counterName);
 		LocalProcessExecutor.executeCommand("logman delete "+counterName);
 		String countersString = "";
-		for (String c : counters)countersString.concat("\""+c+"\" ");
+		for (String c : counters)countersString += ("\""+c+"\" ");
+		
 		LocalProcessExecutor.executeCommand("logman create counter "+ counterName +" -c "+ countersString +"-si "
 						+ frequency +" -max "+ maxFileSizeMb +" -f csv -o \""+ (recordPath+ID+SEPARATOR+df.format(new Date())) +"\"");	
 		setLogFileForPickUp(ID);

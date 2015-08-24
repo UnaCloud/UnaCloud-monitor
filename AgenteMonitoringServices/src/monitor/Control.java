@@ -16,6 +16,7 @@ public class Control {
 	public MonitoringController controller;
 
 	public static void main(String[] args) {
+		
 		try {
 			new Control();
 		} catch (Exception e) {

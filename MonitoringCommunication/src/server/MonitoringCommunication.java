@@ -14,6 +14,8 @@ import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import monitoring.MonitoringConstants;
+
 import monitoring.MonitoringController;
 
 import org.json.JSONArray;
@@ -46,15 +48,15 @@ public class MonitoringCommunication extends Thread{
 
 				switch(command[0].toUpperCase()) {
 
-				case "GET":
+				case MonitoringConstants.GET:
 					getFile(command[1]);
 					break;
 
-				case "QUERY":
+				case MonitoringConstants.QUERY:
 					query();
 					break;
 
-				case "EXECUTE":
+				case MonitoringConstants.EXECUTE:
 					execute(command[1]);
 					break;
 
@@ -74,12 +76,12 @@ public class MonitoringCommunication extends Thread{
 
 	private void getFile(String services) throws Exception {
 		PrintWriter writer = new PrintWriter(out);
-		if(services.toUpperCase().equals("ALL")) {
+		if(services.toUpperCase().equals(MonitoringConstants.ALL)) {
 			for(File file : controller.getPickupFiles()) {
 				fileProtocol(file, writer);
 			}
 		} else {
-			String[] names = services.split(",");
+			String[] names = services.split(MonitoringConstants.SERVICE_NAME_SEPARATOR);
 			for (String name : names) {
 				for(File file : controller.getPickupFiles(name)) {
 					fileProtocol(file, writer);
@@ -111,23 +113,23 @@ public class MonitoringCommunication extends Thread{
 		for (tries = 0; tries < RESEND_TRIES; tries++) {
 
 
-			writer.println("FILE-"+file.getName()+"-"+file.length()+"-Bytes");
+			writer.println(MonitoringConstants.FILE_NAME+MonitoringConstants.COMMS_SEPARATOR+file.getName()+"-"+file.length()+"-Bytes");
 			writer.flush();
 
-			if(!reader.readLine().toUpperCase().startsWith("OK")) {
+			if(!reader.readLine().toUpperCase().startsWith(MonitoringConstants.COMMS_OK)) {
 				continue;
 			}
 
 			sendFile(file);
 
-			if(!reader.readLine().toUpperCase().startsWith("OK")) {
+			if(!reader.readLine().toUpperCase().startsWith(MonitoringConstants.COMMS_OK)) {
 				continue;
 			}
 
-			writer.println("HASH-"+Base64.encode(getHash(file)));
+			writer.println(MonitoringConstants.FILE_HASH+MonitoringConstants.COMMS_SEPARATOR+Base64.encode(getHash(file)));
 			writer.flush();
 
-			if(!reader.readLine().toUpperCase().startsWith("OK")) {
+			if(!reader.readLine().toUpperCase().startsWith(MonitoringConstants.COMMS_OK)) {
 				continue;
 			}
 
@@ -136,7 +138,7 @@ public class MonitoringCommunication extends Thread{
 		}
 
 		if(tries == 3) {
-			writer.println("ERROR-Retries exceeded");
+			writer.println(MonitoringConstants.COMMS_ERROR + "-Retries exceeded");
 			writer.flush();
 			throw new Exception("Couldn't send all files");
 		}
@@ -159,7 +161,7 @@ public class MonitoringCommunication extends Thread{
 
 	private byte[] getHash(File file) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			MessageDigest md = MessageDigest.getInstance(MonitoringConstants.HASH_ALGORITHM);
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 
 			int count = 0;
