@@ -9,6 +9,7 @@ import org.hyperic.sigar.cmd.Shell;
 import org.hyperic.sigar.cmd.SigarCommandBase;
 
 import com.losandes.utils.LocalProcessExecutor;
+import com.losandes.utils.MySystem;
 
 import static com.losandes.utils.Constants.*;
 
@@ -82,18 +83,7 @@ public class Network extends SigarCommandBase {
         networkHostname = info.getHostName();
         networkGateway = info.getDefaultGateway();
     }
-    
-    static String hostname=null;
-    /**
-     * Responsible for obtaining the hostname
-     * @return
-     */
-    public static String getHostname() {
-    	if(hostname!=null)return hostname;
-    	hostname=LocalProcessExecutor.executeCommandOutput("hostname").trim();
-    	return hostname;
-    }
-
+ 
     /**
      * Responsible for getting IP address
      * @return
@@ -101,7 +91,7 @@ public class Network extends SigarCommandBase {
     public String getIpAddress() {
         String result = "";
         try {
-            java.net.InetAddress inetAdd = java.net.InetAddress.getByName(getHostname());
+            java.net.InetAddress inetAdd = java.net.InetAddress.getByName(MySystem.getHostname());
             result = inetAdd.getHostAddress();
         } catch (UnknownHostException ex) {
             result = ERROR_MESSAGE + "getting the IP address: " + ex.getMessage();
@@ -140,7 +130,7 @@ public class Network extends SigarCommandBase {
     public void getNetworkInfo(String opeSys) {
         if (opeSys.toLowerCase().contains("mac")) {
             networkInterface = "inet";
-            networkHostname = getHostname();
+            networkHostname = MySystem.getHostname();
             networkIPAddress = getIpAddress();
             networkMACAddress = getMacAddress();
             networkNetmask = "255.255.255.0";

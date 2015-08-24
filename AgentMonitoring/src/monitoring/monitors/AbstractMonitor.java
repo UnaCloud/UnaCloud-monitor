@@ -9,6 +9,8 @@ import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.losandes.utils.MySystem;
+
 import monitoring.configuration.InterfaceSensorConfiguration;
 import enums.MonitoringStatus;
 
@@ -49,12 +51,13 @@ public abstract class AbstractMonitor implements Runnable{
 	/**
 	 * Date format to manage files
 	 */
-	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
+	protected SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
 	
 	/**
 	 * Class to control variables to configure sensor
 	 */
 	protected InterfaceSensorConfiguration configuration;		
+	
 	
 	protected AbstractMonitor(String id, InterfaceSensorConfiguration conf) throws Exception {	
 		ID = id;
@@ -117,8 +120,8 @@ public abstract class AbstractMonitor implements Runnable{
 		};
 		Date d = new Date();
 		for (File file : folder.listFiles(filtro)) {
-			String fileName = file.getName().replace(EXT, "");
-			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+fileName+SEPARATOR+df.format(d)+EXT));
+			String fileName = file.getName().replace(EXT, "").replace(startFileName, "");
+			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+ID+SEPARATOR+MySystem.getHostname()+SEPARATOR+fileName+SEPARATOR+df.format(d)+EXT));
 		}
 	}
 	
