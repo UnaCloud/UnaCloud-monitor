@@ -107,7 +107,7 @@ public class MonitoringController {
 	 * To understand services status check MonitoringStatus Enum
 	 */
 	public void startServices(){
-		if(executor==null)executor = new MonitoringExecuter();
+		if(executor==null||!executor.isAlive())executor = new MonitoringExecuter();
 		for (AbstractMonitor monitor : tools.values()) {
 			if(monitor.isReady())executor.addMonitor(monitor);	
 		}

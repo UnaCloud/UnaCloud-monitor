@@ -38,8 +38,7 @@ public class Control {
 			controller.addMonitoringTool(new OpenHardwareMonitor(MonitoringToolEnum.OPEN_HARDWARE.getName(), config.ohConfig));
 			controller.addMonitoringTool(new PerfmonMonitor(MonitoringToolEnum.PERFMON.getName(), config.perfomConfig));			
 			MonitoringCommunication com = new MonitoringCommunication(PORT, controller);			
-			controller.configureServices();//TODO unir 		
-			controller.prepareAllServices();
+			controller.configureServices();//TODO join 		
 			com.start();
 			if(config.end>0){
 				new Thread(){					
@@ -63,6 +62,7 @@ public class Control {
 									System.out.println("before init");
 									sleepUntilInit(init, d);
 								}
+								controller.prepareAllServices();
 								controller.startServices();	
 								try {
 									System.out.println("I will sleep "+(end.getTime()-d.getTime()));
@@ -85,6 +85,7 @@ public class Control {
 					}
 				}.start();
 			}else{
+				controller.prepareAllServices();
 				controller.startServices();	
 			}
 		} catch (Exception e) {
