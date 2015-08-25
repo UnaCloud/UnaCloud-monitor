@@ -19,6 +19,8 @@ public class ConfigurationServices {
 	PerfmonMonitorConfiguration perfomConfig;
 	PowerGadgetConfigurationInterface powerConfig;
 	ControllerConfiguration controllerConfig;
+	int init;
+	int end;
 	static Properties prop;
 	
 	public ConfigurationServices() {
@@ -27,6 +29,18 @@ public class ConfigurationServices {
 			String propFileName = "config.properties";
 			InputStream inputStream = new FileInputStream(new File(propFileName));
 			prop.load(inputStream);
+						
+			String timeInit = prop.getProperty("TIME_INIT");
+			String timeFinish = prop.getProperty("TIME_END");
+			try {
+				init = Integer.parseInt(timeInit);
+				end = Integer.parseInt(timeFinish);
+				if(init>=end)throw new Exception();
+			} catch (Exception e) {
+				System.out.println("There is not a time-range to execute monitoring");
+				init = 0;
+				end = 0;
+			}			
 			
 			controllerConfig = new ControllerConfiguration() {
 				

@@ -13,7 +13,7 @@ import monitoring.monitors.*;
 public class Control {
 	public static final int PORT = 720;
 	
-	public MonitoringController controller;
+	public static MonitoringController controller;
 
 	public static void main(String[] args) {
 		
@@ -30,7 +30,7 @@ public class Control {
 	}
 	
 	public void prepareServices(){
-		ConfigurationServices config = new ConfigurationServices();
+		final ConfigurationServices config = new ConfigurationServices();
 		controller = new MonitoringController(config.controllerConfig);		
 		try {
 			controller.addMonitoringTool(new SigarMonitor(MonitoringToolEnum.SIGAR.getName(), config.sigarConfig));
@@ -40,11 +40,54 @@ public class Control {
 			MonitoringCommunication com = new MonitoringCommunication(PORT, controller);			
 			controller.configureServices();//TODO unir 		
 			controller.prepareAllServices();
-			controller.startServices();
 			com.start();
-			
+			if(config.end>0){
+				new Thread(){					
+					public void sleepUntilInit(Date init, Date current){
+						try {
+							System.out.println("I will sleep "+(init.getTime()-current.getTime()));
+							Thread.sleep(init.getTime()-current.getTime());	
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					@Override
+					public void run() {
+						while(true){
+							Date d = new Date();							
+							Date end = new Date(); end.setHours(config.end-1);end.setMinutes(55);end.setSeconds(0);
+							Date init = new Date(); init.setHours(config.init);init.setMinutes(0);init.setSeconds(0);
+							if(d.before(end)){
+								System.out.println(d+" before end");
+								if(d.before(init)){
+									System.out.println("before init");
+									sleepUntilInit(init, d);
+								}
+								controller.startServices();	
+								try {
+									System.out.println("I will sleep "+(end.getTime()-d.getTime()));
+									Thread.sleep(end.getTime()-d.getTime());		
+									controller.stopServices(new String[]{
+											MonitoringToolEnum.OPEN_HARDWARE.getName(),
+											MonitoringToolEnum.PERFMON.getName(),
+											MonitoringToolEnum.POWER_GADGET.getName(),
+											MonitoringToolEnum.SIGAR.getName()});
+									Thread.sleep(1000*60);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+									System.exit(0);
+								}
+							}else{								
+								init.setTime(init.getTime()+(1000*60*60*24));
+								sleepUntilInit(init, d);
+							}
+						}
+					}
+				}.start();
+			}else{
+				controller.startServices();	
+			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -24,7 +24,6 @@ public class MonitorInitialReport implements Serializable{
     private Timestamp timest;
     private long timeLong;
     private double mflops,timeinSecs;
-    private String hostname;
     private String operatingSystemName;
     private String operatingSystemVersion;
     private String operatingSystemArchitect;
@@ -47,11 +46,10 @@ public class MonitorInitialReport implements Serializable{
     public MonitorInitialReport() {
 	}
 
-    public MonitorInitialReport(Timestamp timest, Long time, String hostname, double mflops, double timeinSecs, String operatingSystemName, String operatingSystemVersion, String operatingSystemArchitect, String cPUModel, String cPUVendor, int cPUCores, int totalSockets, String cPUMhz, int coresPerSocket, double rAMMemorySize, double swapMemorySize, long hardDiskSpace, String hardDiskFileSystem, String networkMACAddress, String networkIPAddress, String networkInterface, String networkNetmask, String networkGateway) {
+    public MonitorInitialReport(Timestamp timest, Long time, double mflops, double timeinSecs, String operatingSystemName, String operatingSystemVersion, String operatingSystemArchitect, String cPUModel, String cPUVendor, int cPUCores, int totalSockets, String cPUMhz, int coresPerSocket, double rAMMemorySize, double swapMemorySize, long hardDiskSpace, String hardDiskFileSystem, String networkMACAddress, String networkIPAddress, String networkInterface, String networkNetmask, String networkGateway) {
        // super(REGISTRATION_OPERATION,0);
         this.timest = timest;
         this.timeLong = time;
-        this.hostname = hostname;
         this.operatingSystemName = operatingSystemName;
         this.operatingSystemVersion = operatingSystemVersion;
         this.operatingSystemArchitect = operatingSystemArchitect;
@@ -86,7 +84,6 @@ public class MonitorInitialReport implements Serializable{
 			    timest = new java.sql.Timestamp(parsedDate.getTime());
 			}
 			else if(components[0].equals(ItemCPUMetrics.TIME_MILLI.title())) timeLong = Long.parseLong(components[1]);
-			else if(components[0].equals(ItemCPUMetrics.HOSTNAME.title())) hostname = components[1];
 			else if(components[0].equals(ItemCPUMetrics.OS_NAME.title())) operatingSystemName = components[1];
 			else if(components[0].equals(ItemCPUMetrics.OS_VERSION.title())) operatingSystemVersion = components[1];
 			else if(components[0].equals(ItemCPUMetrics.OS_ARQUITECTURE.title())) operatingSystemArchitect = components[1];
@@ -117,14 +114,6 @@ public class MonitorInitialReport implements Serializable{
 
     public void setTimest(Timestamp timest) {
         this.timest = timest;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
     }
 
     public String getOperatingSystemName() {
@@ -246,7 +235,6 @@ public class MonitorInitialReport implements Serializable{
 			parsedDate = dateFormat.parse(l);
 			timest = new java.sql.Timestamp(parsedDate.getTime());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	    
     }
@@ -314,7 +302,6 @@ public class MonitorInitialReport implements Serializable{
 				+ ","+ItemCPUMetrics.TIME_MILLI.title()+"=" + timeLong 
 				+ ","+ItemCPUMetrics.MFLOPS.title()+"=" + mflops
 				+ ","+ItemCPUMetrics.CPU_SECONDS.title()+"=" + timeinSecs 
-				+ ","+ItemCPUMetrics.HOSTNAME.title()+"=" + hostname
 				+ ","+ItemCPUMetrics.OS_NAME.title()+"=" + operatingSystemName
 				+ ","+ItemCPUMetrics.OS_VERSION.title()+"=" + operatingSystemVersion
 				+ ","+ItemCPUMetrics.OS_ARQUITECTURE.title()+"=" + operatingSystemArchitect

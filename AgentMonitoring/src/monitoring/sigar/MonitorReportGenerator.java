@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 import monitoring.sigar.physicalmachine.PhysicalMachine;
 
-import org.hyperic.sigar.Cpu;
+//import org.hyperic.sigar.Cpu;
 import org.hyperic.sigar.CpuInfo;
-import org.hyperic.sigar.CpuPerc;
+//import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.SigarException;
@@ -15,11 +15,15 @@ import org.hyperic.sigar.Uptime;
 import org.hyperic.sigar.cmd.SigarCommandBase;
 
 import com.losandes.utils.OperatingSystem;
-import com.losandes.utils.MySystem;
 
 import reports.MonitorInitialReport;
 import reports.MonitorReport;
-
+/**
+ * TODO Fix this class to provide different types of monitoring request
+ * 
+ * @author CesarF
+ *
+ */
 public class MonitorReportGenerator extends SigarCommandBase {
 	
 	private static MonitorReportGenerator instance;
@@ -70,7 +74,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
         }
         org.hyperic.sigar.CpuInfo CPU1 = infos[0];
         return new MonitorInitialReport(timest,date.getTime(),
-                MySystem.getHostname().toUpperCase(), CPUMflops.getMflops(),
+                CPUMflops.getMflops(),
                 CPUMflops.getTimeinSecs(),
                 monitor.operatingSystem.getOperatingSystemName(),
                 monitor.operatingSystem.getOperatingSystemVersion(),
@@ -129,33 +133,33 @@ public class MonitorReportGenerator extends SigarCommandBase {
      * @return report collected
      * @throws SigarException 
      */
+    //TODO improve this class to manage different types of MonitorReport with different attributes
     private  MonitorReport generateStateReport() throws SigarException {        
         PhysicalMachine monitor = new PhysicalMachine();
         Date date = new Date();
         java.sql.Timestamp timest = new java.sql.Timestamp(date.getTime());
-
-        String processes = "";
-        long[] pids = instance.sigar.getProcList();
-        for (long id : pids) {
-            try {
-            	String[] processName = instance.sigar.getProcExe(id).getName().split("\\\\");
-                processes += "(name:"+processName[processName.length - 1] + "; virtualMemorySize:"+instance.sigar.getProcMem(id).getSize()+"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"+(id==pids[pids.length-1]?"":",");
-            } catch (Exception ex) {
-            }
-        }
-        Cpu cpu = instance.sigar.getCpu();
-        CpuPerc CPU2 = instance.sigar.getCpuPerc();
+//
+//        String processes = "";
+//        long[] pids = instance.sigar.getProcList();
+//        for (long id : pids) {
+//            try {
+//            	String[] processName = instance.sigar.getProcExe(id).getName().split("\\\\");
+//                processes += "(name:"+processName[processName.length - 1] + "; virtualMemorySize:"+instance.sigar.getProcMem(id).getSize()+"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"+(id==pids[pids.length-1]?"":",");
+//            } catch (Exception ex) {
+//            }
+//        }
+       //Cpu cpu = instance.sigar.getCpu();
+       //CpuPerc CPU2 = instance.sigar.getCpuPerc();
         Uptime UPTIME = instance.sigar.getUptime();
         Mem MEM = instance.sigar.getMem();
         NetInterfaceStat NET = instance.sigar
                 .getNetInterfaceStat(monitor.network.getNetworkInterface());
         return new MonitorReport(timest,date.getTime(),  
-        		OperatingSystem.getUserName(),MySystem.getHostname().toUpperCase(),
-                UPTIME.getUptime(), CPU2.getIdle() * 100,
-                (100 - (CPU2.getIdle() * 100)), CPU2.getUser() * 100,
-                CPU2.getSys() * 100, CPU2.getNice() * 100,
-                CPU2.getWait() * 100, CPU2.getCombined() * 100, cpu.getUser(),
-                cpu.getSys(), cpu.getNice(), cpu.getWait(), cpu.getIdle(),
+        		OperatingSystem.getUserName(), UPTIME.getUptime(),
+//        		CPU2.getIdle() * 100,(100 - (CPU2.getIdle() * 100)), 
+//        		CPU2.getUser() * 100, CPU2.getSys() * 100, CPU2.getNice() * 100,
+//                CPU2.getWait() * 100, CPU2.getCombined() * 100, cpu.getUser(),
+//                cpu.getSys(), cpu.getNice(), cpu.getWait(), cpu.getIdle(),
                 monitor.memory.getRAMMemoryFree(),
                 monitor.memory.getRAMMemoryUsed(), MEM.getFreePercent(),
                 MEM.getUsedPercent(), monitor.memory.getSwapMemoryFree(),
@@ -165,7 +169,9 @@ public class MonitorReportGenerator extends SigarCommandBase {
                 monitor.hardDisk.getHardDiskFreeSpace(),
                 monitor.hardDisk.getHardDiskUsedSpace(), NET.getRxBytes(),
                 NET.getTxBytes(), NET.getSpeed(), NET.getRxErrors(),
-                NET.getTxErrors(), NET.getRxPackets(), NET.getTxPackets(), processes);
+                NET.getTxErrors(), NET.getRxPackets(), NET.getTxPackets()
+               // , processes
+                );
     
     }
 

@@ -34,7 +34,7 @@ public class MonitoringController {
 	/**
 	 * Execute in a cycle all services enabled
 	 */
-	private MonitoringExecuter c;	
+	private MonitoringExecuter executor;	
 
 	/**
 	 * Path to folder where the files to be picked up are stored
@@ -62,6 +62,13 @@ public class MonitoringController {
 	public void addMonitoringTool(AbstractMonitor monitor){
 		if(monitor==null)return;
 		tools.put(monitor.getId(), monitor);
+	}
+	/**
+	 * Asks to executor if thread is running
+	 * @return
+	 */
+	public boolean monitoringIsRunning(){
+		return executor!=null&&executor.isAlive();
 	}
 	/**
 	 * Method to enabled services using the configuration class
@@ -100,11 +107,11 @@ public class MonitoringController {
 	 * To understand services status check MonitoringStatus Enum
 	 */
 	public void startServices(){
-		if(c==null)c = new MonitoringExecuter();
+		if(executor==null)executor = new MonitoringExecuter();
 		for (AbstractMonitor monitor : tools.values()) {
-			if(monitor.isReady())c.addMonitor(monitor);	
+			if(monitor.isReady())executor.addMonitor(monitor);	
 		}
-		if(!c.isAlive())c.start();	
+		if(!executor.isAlive())executor.start();	
 	}
 	/**
 	 * Stop services referenced in array

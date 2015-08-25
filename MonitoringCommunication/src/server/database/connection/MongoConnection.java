@@ -1,4 +1,4 @@
-package connection;
+package server.database.connection;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
