@@ -32,6 +32,11 @@ public class MonitoringClient {
 
 	private String fileSavePath;
 
+	/**
+	 * @param netAddress: Address of the server
+	 * @param port: Expected connection port
+	 * @param fileSavePath: Path to save downloaded files
+	 */
 	public MonitoringClient(String netAddress, int port, String fileSavePath) {
 		this.netAddress = netAddress;
 		this.port = port;
@@ -189,11 +194,20 @@ public class MonitoringClient {
 
 	}
 
+	/**
+	 * Creates the connection with the server and instantiates the writer
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	private void establishConnection() throws UnknownHostException, IOException {
 		socket = new Socket(netAddress, port);
 		writer = new PrintWriter(socket.getOutputStream());
 	}
 
+	/**
+	 * Closes the connection to the server
+	 * @throws IOException
+	 */
 	private void closeConnection() throws IOException {
 		writer.close();
 		socket.close();
@@ -227,26 +241,8 @@ public class MonitoringClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//new MonitoringClient("localhost", 8080).query();
-		new MonitoringClient("localhost", 8080, "test\\").getFiles();
-		//		Socket socket = new Socket("localhost", 7856);
-		//		PrintWriter writer = new PrintWriter(socket.getOutputStream());
-		//		writer.println("GET ALL");
-		//		writer.flush();
-		//		
-		//		FileOutputStream fo = new FileOutputStream(new File("lalal.txt"));
-		//		BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
-		//		
-		//		int count = 0;
-		//		byte[] buffer = new byte[1024*1024];
-		//		while ((count = in.read(buffer)) > 0) {
-		//			fo.write(buffer, 0, count);
-		//			fo.flush();
-		//		}
-		//		
-		//		writer.println("OK");
-		//		fo.close();
-		//		socket.close();
+		//new MonitoringClient("localhost", 8080 , "test\\").query();
+		//new MonitoringClient("localhost", 8080, "test\\").getFiles();
 	}
 
 }

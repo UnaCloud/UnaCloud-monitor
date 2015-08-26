@@ -139,7 +139,7 @@ public class MonitoringCommunicationMock extends Thread{
 
 			writer.println(MonitoringConstants.FILE_HASH+MonitoringConstants.COMMS_SEPARATOR+Base64.encode(getHash(file)));
 			writer.flush();
-			System.out.println("LOL");
+			
 			if(!reader.readLine().toUpperCase().startsWith(MonitoringConstants.COMMS_OK)) {
 				continue;
 			}
