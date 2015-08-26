@@ -42,9 +42,11 @@ public class MonitoringCommunicationMock extends Thread{
 		while(true) {
 			try {
 				Socket clientSocket = serverSocket.accept();
+				System.out.println("CONNECTION ESTABLISHED");
 				reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				out = clientSocket.getOutputStream();
 				String[] command = reader.readLine().split(" ");
+				System.out.println("COMMAND: " + command[0]);
 
 				switch(command[0].toUpperCase()) {
 
@@ -76,15 +78,22 @@ public class MonitoringCommunicationMock extends Thread{
 
 	private void getFile(String services) throws Exception {
 		PrintWriter writer = new PrintWriter(out);
+		
+		File[] files = {new File("ServerTestFile1.txt"), new File("ServerTestFile2.txt")};
+		
 		if(services.toUpperCase().equals(MonitoringConstants.ALL)) {
-			for(File file : controller.getPickupFiles()) {
+			for(File file : files) {
+				System.out.println("SENDING FILE: " + file.getName());
 				fileProtocol(file, writer);
+				System.out.println("FILE SENT");
 			}
 		} else {
 			String[] names = services.split(MonitoringConstants.SERVICE_NAME_SEPARATOR);
 			for (String name : names) {
-				for(File file : controller.getPickupFiles(name)) {
-					fileProtocol(file, writer);
+				if(name.equals("STF1")) {
+					fileProtocol(new File("ServerTestFile1.txt"), writer);
+				} else if(name.equals("STF2")) {
+					fileProtocol(new File("ServerTestFile2.txt"), writer);
 				}
 			}
 		}
@@ -93,13 +102,15 @@ public class MonitoringCommunicationMock extends Thread{
 	}
 
 	private void query() {
+		System.out.println("QUERY");
 		PrintWriter writer = new PrintWriter(out);
 		String[] services = {"STF1", "STF2"};
 
 		JSONObject response = new JSONObject();
-		response.append("size",services.length);
-		response.append("services", new JSONArray(services));
+		response.put("size", services.length);
+		response.put("services", new JSONArray(services));
 		writer.println(response);
+		writer.flush();
 	}
 
 	//TODO
@@ -128,12 +139,11 @@ public class MonitoringCommunicationMock extends Thread{
 
 			writer.println(MonitoringConstants.FILE_HASH+MonitoringConstants.COMMS_SEPARATOR+Base64.encode(getHash(file)));
 			writer.flush();
-
+			System.out.println("LOL");
 			if(!reader.readLine().toUpperCase().startsWith(MonitoringConstants.COMMS_OK)) {
 				continue;
 			}
-
-			controller.sendFileToDone(file);
+			
 			break;
 		}
 
@@ -159,6 +169,11 @@ public class MonitoringCommunicationMock extends Thread{
 		in.close();
 	}
 
+	/**
+	 * Returns the hash digest of the specified file
+	 * @param file
+	 * @return hash signature
+	 */
 	private byte[] getHash(File file) {
 		try {
 			MessageDigest md = MessageDigest.getInstance(MonitoringConstants.HASH_ALGORITHM);
@@ -180,7 +195,8 @@ public class MonitoringCommunicationMock extends Thread{
 
 		return null;
 	}
+	
 	public static void main(String[] args) throws IOException {
-		new MonitoringCommunicationMock(7856, null).start();
+		new MonitoringCommunicationMock(8080, null).start();
 	}
 }

@@ -97,9 +97,10 @@ public class MonitoringCommunication extends Thread{
 		String[] services = controller.getServicesNames();
 
 		JSONObject response = new JSONObject();
-		response.append("size",services.length);
-		response.append("services", new JSONArray(services));
+		response.put("size", services.length);
+		response.put("services", new JSONArray(services));
 		writer.println(response);
+		writer.flush();
 	}
 
 	//TODO
