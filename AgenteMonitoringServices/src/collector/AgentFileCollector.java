@@ -2,14 +2,15 @@ package collector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
-
-import monitoring.MonitoringConstants;
 import client.MonitoringClient;
 
 public class AgentFileCollector {
@@ -21,6 +22,7 @@ public class AgentFileCollector {
 	private static String SAVE_PATH = "file_save";
 
 	public static void main(String[] args) throws Exception {
+		config();
 		Properties prop = new Properties();
 		InputStream inputStream = new FileInputStream(new File("AgentFileCollector.properties"));
 		prop.load(inputStream);
@@ -33,12 +35,12 @@ public class AgentFileCollector {
 			System.out.println(string);
 		}
 
-		/*for (int i = 0; i < addresses.length; i++) {
+		for (int i = 0; i < addresses.length; i++) {
 			new MonitoringClient(addresses[i], port, tempPath).getFiles();
 			System.out.println((i+i)+"/"+addresses.length+" completed hosts");
 		}
 
-		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));*/
+		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
 
 	}
 
@@ -63,7 +65,7 @@ public class AgentFileCollector {
 				while(!lastAdded.equals(range[1])) {
 					for (int j = 3; j >= 0; j--) {
 						current[j]++;
-						if(Byte.toUnsignedInt(current[j]) == 255) 
+						if(current[j] == ((byte)255)) 
 							current[j] = 1;
 						else
 							break;
@@ -136,5 +138,25 @@ public class AgentFileCollector {
 			return "OpenHardwareMonitor";
 		
 		return "???";
+	}
+	
+	public static void config(){
+		try {
+    		//Create agent log file
+        	PrintStream ps=new PrintStream(new FileOutputStream("log.txt",true),true){
+        		@Override
+        		public void println(String x) {
+        			super.println(new Date()+" "+x);
+        		}
+        		@Override
+        		public void println(Object x) {
+        			super.println(new Date()+" "+x);
+        		}
+        	};
+			System.setOut(ps);
+			System.setErr(ps);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}    	
 	}
 }
