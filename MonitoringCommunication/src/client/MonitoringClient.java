@@ -140,7 +140,9 @@ public class MonitoringClient {
 				long filesize = Long.parseLong(response[2]);
 
 				File file = new File(fileSavePath + File.pathSeparator + fileName);
-
+				//TODO
+				if(!file.exists())
+					file.createNewFile();
 				writer.println(MonitoringConstants.COMMS_OK);
 				writer.flush();
 				
@@ -153,8 +155,9 @@ public class MonitoringClient {
 				writer.flush();
 
 				String localHash = Base64.encode(getHash(file));
-
-				response = reader.readLine().split(MonitoringConstants.COMMS_SEPARATOR);
+				String test = reader.readLine();
+				System.out.println("-!-> " + test); 
+				response = test.split(MonitoringConstants.COMMS_SEPARATOR);
 				
 				
 				if(response[1].equals(localHash))
@@ -239,10 +242,4 @@ public class MonitoringClient {
 
 		return null;
 	}
-
-	public static void main(String[] args) throws Exception {
-		//new MonitoringClient("localhost", 8080 , "test\\").query();
-		//new MonitoringClient("localhost", 8080, "test\\").getFiles();
-	}
-
 }

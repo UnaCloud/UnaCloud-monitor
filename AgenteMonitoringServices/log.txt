@@ -1,0 +1,5 @@
+Exception in thread "main" Tue Sep 01 18:22:38 COT 2015 java.io.FileNotFoundException: AgentFileCollector.properties (El sistema no puede encontrar el archivo especificado)
+Tue Sep 01 18:22:38 COT 2015 	at java.io.FileInputStream.open0(Native Method)
+Tue Sep 01 18:22:38 COT 2015 	at java.io.FileInputStream.open(Unknown Source)
+Tue Sep 01 18:22:38 COT 2015 	at java.io.FileInputStream.<init>(Unknown Source)
+Tue Sep 01 18:22:38 COT 2015 	at collector.AgentFileCollector.main(AgentFileCollector.java:27)
