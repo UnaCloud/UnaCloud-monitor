@@ -206,8 +206,8 @@ public class MonitoringController {
 	public boolean sendFileToDone(final File file){
 	    try {
 	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
-	    	String newName = file.getName().substring(file.getName().indexOf(SEPARATOR), file.getName().length());
-	    	file.renameTo(new File(donePath+DONE+SEPARATOR+newName+df.format(new Date())+EXT));		
+	    	String newName = file.getName().substring(file.getName().indexOf(SEPARATOR), file.getName().length()).replace(EXT, "");
+	    	file.renameTo(new File(donePath+DONE+SEPARATOR+newName+SEPARATOR+df.format(new Date())+EXT));		
 	    	return true;
 		} catch (Exception e) {
 			e.printStackTrace();
