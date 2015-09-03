@@ -41,6 +41,7 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 
 	@Override
 	protected void doMonitoring() throws Exception {
+		createDateTempFile();
 		LocalProcessExecutor.createProcess(recordPath+openHardwareProcess);
 		Thread.sleep(windowSizeTime*1000);
 		LocalProcessExecutor.killProcess(openHardwareProcess);	
@@ -87,11 +88,12 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 		};
 		Date d = new Date();
 		File f = getDateTempFile();
-		String tempName = f.getName().replace(EXT, "").replace(TEMP, "").replace(SEPARATOR, "");
+		String tempName =null;
+		if(f!=null)tempName = f.getName().replace(EXT, "").replace(TEMP+SEPARATOR, "");
 		for (File file : folder.listFiles(filter)) {
 			String fileName = file.getName().replace(EXT, "").replace(startFileName, "").replace(SEPARATOR, "");
 			{
-				if(tempName.startsWith(fileName))fileName=tempName;
+				if(tempName!=null&&tempName.startsWith(fileName))fileName=tempName;
 			}
 			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+ID+SEPARATOR+MySystem.getHostname()+SEPARATOR+fileName+SEPARATOR+df.format(d)+EXT));
 		}
