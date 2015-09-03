@@ -2,7 +2,7 @@ package utils;
 
 public enum MonitoringToolEnum {
 	
-	SIGAR("sigar"), OPEN_HARDWARE("open_hardware"), PERFMON("perfmon"), POWER_GADGET("power_gadget");
+	SIGAR("sigar"), OPEN_HARDWARE("openHardware"), PERFMON("perfmon"), POWER_GADGET("powerGadget");
 	
 	String name;
 	

@@ -22,6 +22,7 @@ import monitoring.sigar.MonitorReportGenerator;
 public class SigarMonitor extends AbstractMonitor {
 
 	private File currentFile;
+	private String init;
 	
 	public SigarMonitor(String id, SigarConfigurationInterface configuration) throws Exception {
 		super(id, configuration);		
@@ -30,12 +31,7 @@ public class SigarMonitor extends AbstractMonitor {
 	@Override
 	protected void doInitial() throws Exception{
 		 setLogFileForPickUp(ID);	
-		 currentFile = new File(recordPath+File.separator+ID+SEPARATOR+df.format(new Date())+EXT);
-		 PrintWriter pw = new PrintWriter(new FileOutputStream(
-				 currentFile,true),true);
-	     pw.println(MonitorReportGenerator.getInstance().getInitialReport());
-	     pw.close();
-	    
+		 init = MonitorReportGenerator.getInstance().getInitialReport().toString();	    
 	}
 	
 	@Override
@@ -43,7 +39,12 @@ public class SigarMonitor extends AbstractMonitor {
 	     int localFrecuency = 1000*frequency;  
 	     Date d = new Date();
 	     d.setTime(d.getTime()+(windowSizeTime*1000));	
+	     currentFile = new File(recordPath+File.separator+ID+SEPARATOR+df.format(new Date())+EXT);
 	     PrintWriter pw = new PrintWriter(new FileOutputStream(currentFile,true),true);
+	     if(init!=null){
+	    	 pw.println(init);
+	    	 init = null;
+	     }
 	     while(d.after(new Date())){  
 	    	pw.println(MonitorReportGenerator.getInstance().getStateReport());
 	        Thread.sleep(localFrecuency);

@@ -108,19 +108,19 @@ public abstract class AbstractMonitor implements Runnable{
 	
 	/**
 	 * Move all sensor files to pickUp folder. 
-	 * All files that start with name parameter are renamed with word PICKUP_ at beginning and move them to pickup folder
+	 * All files that start with name parameter are renamed with word PICK_ at beginning and move them to pickup folder
 	 */
 	protected void setLogFileForPickUp(final String startFileName){
 		File folder = new File(recordPath);		
-		FilenameFilter filtro = new FilenameFilter() {
+		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.startsWith(startFileName);
 			}
 		};
 		Date d = new Date();
-		for (File file : folder.listFiles(filtro)) {
-			String fileName = file.getName().replace(EXT, "").replace(startFileName, "");
+		for (File file : folder.listFiles(filter)) {
+			String fileName = file.getName().replace(EXT, "").replace(startFileName, "").replace(SEPARATOR, "");
 			file.renameTo(new File(pickUpPath+PICKUP+SEPARATOR+ID+SEPARATOR+MySystem.getHostname()+SEPARATOR+fileName+SEPARATOR+df.format(d)+EXT));
 		}
 	}
@@ -152,6 +152,7 @@ public abstract class AbstractMonitor implements Runnable{
 	 */
 	public void configure(String pickupPath) {
 		try {
+			if(!ID.matches("[A-Za-z]"))throw new Exception("ID sensor does not match [A-Za-z]");
 			doConfiguration();
 			toEnable(configuration.getRecordPath(),pickupPath);
 		} catch (Exception e) {
