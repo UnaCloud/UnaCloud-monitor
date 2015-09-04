@@ -113,5 +113,10 @@ public class Control {
 			e.printStackTrace();
 		}    	
 	}
+	
+	//TODO
+	public static void compatibilityFileTransform() {
+		
+	}
 
 }

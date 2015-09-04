@@ -152,7 +152,7 @@ public abstract class AbstractMonitor implements Runnable{
 	 */
 	public void configure(String pickupPath) {
 		try {
-			if(!ID.matches("[A-Za-z]"))throw new Exception("ID sensor does not match [A-Za-z]");
+			if(!ID.matches("[A-Za-z]*"))throw new Exception("ID sensor does not match [A-Za-z]");
 			doConfiguration();
 			toEnable(configuration.getRecordPath(),pickupPath);
 		} catch (Exception e) {

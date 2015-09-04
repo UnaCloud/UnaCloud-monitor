@@ -8,9 +8,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+
 import client.MonitoringClient;
 
 public class AgentFileCollector {
@@ -37,7 +39,7 @@ public class AgentFileCollector {
 
 		for (int i = 0; i < addresses.length; i++) {
 			new MonitoringClient(addresses[i], port, tempPath).getFiles();
-			System.out.println((i+i)+"/"+addresses.length+" completed hosts");
+			System.out.println((i+1)+"/"+addresses.length+" completed hosts");
 		}
 
 		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
@@ -94,65 +96,55 @@ public class AgentFileCollector {
 			String workingDate = getFileStartDate(file);
 			String sensor = getFileSensorName(file);
 			String hostName = getFileHostName(file);
-			String newFileName = file.getName().substring(8, file.getName().length());
-			
-			File savedFolder = new File(savePath+File.separator+ workingDate +File.separator+ sensor +File.separator+ hostName);
+			String newFileName = getNewNameFile(file);
+			File savedFolder = new File(savePath+File.separator+ workingDate  +File.separator+ hostName +File.separator+ sensor);
 			if(!savedFolder.exists())
 				savedFolder.mkdirs();
-			
-			File savedFile = new File(savePath +File.separator+ workingDate +File.separator+ sensor +File.separator+ hostName +File.separator+ newFileName);
+
+			File savedFile = new File(savePath +File.separator+ workingDate +File.separator+ hostName +File.separator+ sensor +File.separator+ newFileName);
 			file.renameTo(savedFile);
 		}
 	}
 
 	private static String getFileHostName(File file) {
-		String fileName = file.getName();
-		if(fileName.contains("__")) {
-			String[] tmp = fileName.split("__")[0].split("_");
-			return tmp[tmp.length-1];
-		} else {
-			String[] tmp = fileName.split("_-")[0].split("_");
-			return tmp[tmp.length-1];
-		}
+		return file.getName().split("_")[2];
 	}
 
 	private static String getFileStartDate(File file) {
-		String fileName = file.getName();
-		if(fileName.contains("__")) {
-			return fileName.split("__")[1].substring(0, 10);
-		} else {
-			String[] tmp = fileName.split("_");
-			return tmp[tmp.length-2].substring(1, tmp[tmp.length-2].length());
-		}
+		return file.getName().split("_")[3].substring(0, 10);
 	}
 
 	private static String getFileSensorName(File file) {
-		String fileName = file.getName();
-		if(fileName.contains("power_gadget"))
-			return "PowerGadget";
-		else if(fileName.contains("sigar"))
-			return "Sigar";
-		else if(fileName.contains("perfmon"))
-			return "Perfmon";
-		else if(fileName.contains("open_hardware"))
-			return "OpenHardwareMonitor";
-		
-		return "???";
+		return file.getName().split("_")[1];
 	}
-	
+
+	private static String getNewNameFile(File file) {
+		String sansSuffix =file.getName().substring(0, file.getName().lastIndexOf('.'));
+		String[] fileName = sansSuffix.split("_");
+		String newName = fileName[1];
+		for (int i = 2; i < fileName.length; i++) {
+			newName += "_" + fileName[i];
+		}
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
+		newName += "_" + df.format(new Date());
+		newName += file.getName().substring(file.getName().lastIndexOf('.'), file.getName().length());
+		return newName;
+		
+	}
+
 	public static void config(){
 		try {
-    		//Create agent log file
-        	PrintStream ps=new PrintStream(new FileOutputStream("log.txt",true),true){
-        		@Override
-        		public void println(String x) {
-        			super.println(new Date()+" "+x);
-        		}
-        		@Override
-        		public void println(Object x) {
-        			super.println(new Date()+" "+x);
-        		}
-        	};
+			//Create agent log file
+			PrintStream ps=new PrintStream(new FileOutputStream("log.txt",true),true){
+				@Override
+				public void println(String x) {
+					super.println(new Date()+" "+x);
+				}
+				@Override
+				public void println(Object x) {
+					super.println(new Date()+" "+x);
+				}
+			};
 			System.setOut(ps);
 			System.setErr(ps);
 		} catch (FileNotFoundException e) {

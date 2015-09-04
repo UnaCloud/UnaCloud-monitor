@@ -12,7 +12,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -135,14 +137,17 @@ public class MonitoringClient {
 		while((ln = reader.readLine()) != null && ln.startsWith(MonitoringConstants.FILE_NAME)) {
 			try {
 				String[] response = ln.split(MonitoringConstants.COMMS_SEPARATOR);
-
 				String fileName = response[1];
-				long filesize = Long.parseLong(response[2]);
+				for (int i = 2; i < response.length-2; i++) {
+					fileName += MonitoringConstants.COMMS_SEPARATOR + response[i];
+				}
+				long filesize = Long.parseLong(response[response.length-2]);
 
 				File file = new File(fileSavePath + File.pathSeparator + fileName);
-				//TODO
+
 				if(!file.exists())
 					file.createNewFile();
+				
 				writer.println(MonitoringConstants.COMMS_OK);
 				writer.flush();
 				
@@ -155,9 +160,7 @@ public class MonitoringClient {
 				writer.flush();
 
 				String localHash = Base64.encode(getHash(file));
-				String test = reader.readLine();
-				System.out.println("-!-> " + test); 
-				response = test.split(MonitoringConstants.COMMS_SEPARATOR);
+				response = reader.readLine().split(MonitoringConstants.COMMS_SEPARATOR);
 				
 				
 				if(response[1].equals(localHash))
@@ -186,11 +189,13 @@ public class MonitoringClient {
 		BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
 
 		int count = 0;
-		byte[] buffer = new byte[1024*1024];
-		while (count < fileSize) {
-			count += in.read(buffer);
+		int totalBytes = 0;
+		byte[] buffer = new byte[1024*8];
+		while (totalBytes < fileSize) {
+			count = in.read(buffer);
 			fo.write(buffer, 0, count);
 			fo.flush();
+			totalBytes += count;
 		}
 
 		fo.close();

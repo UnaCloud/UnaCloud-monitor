@@ -145,13 +145,12 @@ public class MonitoringCommunication extends Thread{
 		}
 	}
 
-	//TODO buffer size?
 	private void sendFile(File file) throws IOException {
 
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+		FileInputStream in = new FileInputStream(file);
 
 		int count = 0;
-		byte[] buffer = new byte[1024*1024];
+		byte[] buffer = new byte[1024*8];
 		while ((count = in.read(buffer)) > 0) {
 			out.write(buffer, 0, count);
 			out.flush();
