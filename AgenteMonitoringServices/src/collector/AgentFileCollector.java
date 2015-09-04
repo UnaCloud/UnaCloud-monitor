@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -107,7 +109,12 @@ public class AgentFileCollector {
 				savedFolder.mkdirs();
 
 			File savedFile = new File(savePath +File.separator+ workingDate +File.separator+ hostName +File.separator+ sensor +File.separator+ newFileName);
-			file.renameTo(savedFile);
+			try {
+				Files.copy(file.toPath(), savedFile.toPath());
+				file.delete();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
