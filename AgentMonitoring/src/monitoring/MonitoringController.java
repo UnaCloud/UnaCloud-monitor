@@ -214,4 +214,8 @@ public class MonitoringController {
 			return false;
 		}
 	}
+	
+	public File getPickPath() {
+		return new File(pickUpPath);
+	}
 }

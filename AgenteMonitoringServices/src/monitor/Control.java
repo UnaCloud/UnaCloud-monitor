@@ -1,7 +1,10 @@
 package monitor;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.PrintStream;
 import java.util.Date;
 
@@ -12,23 +15,25 @@ import monitoring.monitors.*;
 
 public class Control {
 	public static final int PORT = 720;
-	
+
 	public static MonitoringController controller;
 
 	public static void main(String[] args) {
-		
+
 		try {
-			new Control();
+			Control.compatibilityFileTransform(new File("C:\\Users\\TEMP\\Desktop\\Monitoreo\\trans\\"));
+			//new Control();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
-	 
+
 	public Control() {
 		config();
 		prepareServices();
+		compatibilityFileTransform(controller.getPickPath());
 	}
-	
+
 	public void prepareServices(){
 		final ConfigurationServices config = new ConfigurationServices();
 		controller = new MonitoringController(config.controllerConfig);		
@@ -91,32 +96,63 @@ public class Control {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public void config(){
 		try {
-    		//Create agent log file
-        	PrintStream ps=new PrintStream(new FileOutputStream("log.txt",true),true){
-        		@Override
-        		public void println(String x) {
-        			super.println(new Date()+" "+x);
-        		}
-        		@Override
-        		public void println(Object x) {
-        			super.println(new Date()+" "+x);
-        		}
-        	};
+			//Create agent log file
+			PrintStream ps=new PrintStream(new FileOutputStream("log.txt",true),true){
+				@Override
+				public void println(String x) {
+					super.println(new Date()+" "+x);
+				}
+				@Override
+				public void println(Object x) {
+					super.println(new Date()+" "+x);
+				}
+			};
 			System.setOut(ps);
 			System.setErr(ps);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}    	
 	}
-	
-	//TODO
-	public static void compatibilityFileTransform() {
-		
-	}
 
+
+	public static void compatibilityFileTransform(File pickPath) {
+		FilenameFilter ff = new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith("PICK_UP");
+			}
+		};
+		for (File file : pickPath.listFiles(ff)) {
+			String newName = file.getName();
+			String[] tmp;
+			newName = newName.replace("PICK_UP", "PICK");
+			if(newName.contains("open_hardware")) {
+				newName = newName.replace("open_hardware", "openHardware");
+				tmp = newName.split("_");
+				tmp[3] = tmp[3].substring(1, tmp[3].length());
+				tmp[3] += "-00-00-00-000";
+				newName = tmp[0];
+				for (int i = 1; i < tmp.length; i++) {
+					newName += "_" + tmp[i];
+				}
+			} else {
+				newName = newName.replace("__", "_");
+				if(newName.contains("power_gadget")) {
+					newName = newName.replace("power_gadget", "powerGadget");
+				}
+				if(newName.contains("perfmon")) {
+					newName = newName.replaceFirst("_\\d\\d\\d\\d\\d\\d_", "_");
+				}
+			}
+			System.out.println(newName);
+			file.renameTo(new File(pickPath + File.separator + newName));
+		}
+
+	}
 }
