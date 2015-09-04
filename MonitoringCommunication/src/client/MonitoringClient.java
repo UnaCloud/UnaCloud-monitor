@@ -222,9 +222,9 @@ public class MonitoringClient {
 	}
 
 	/**
-	 * Returns the hash digest of the specified file
+	 * Returns the cryptographic digest of a file for integrity checks.
 	 * @param file
-	 * @return hash signature
+	 * @return byte array with the digest
 	 */
 	private byte[] getHash(File file) {
 		try {

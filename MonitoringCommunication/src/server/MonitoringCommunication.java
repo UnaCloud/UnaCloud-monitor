@@ -74,6 +74,11 @@ public class MonitoringCommunication extends Thread{
 		}
 	}
 
+	/**
+	 * Offers all the ready to be picked files from all or a list of services.
+	 * @param services List with MonitoringConstants.SERVICE_NAME_SEPARATOR separated values or the MonitoringConstants.ALL command.
+	 * @throws Exception
+	 */
 	private void getFile(String services) throws Exception {
 		PrintWriter writer = new PrintWriter(out);
 		if(services.toUpperCase().equals(MonitoringConstants.ALL)) {
@@ -92,6 +97,10 @@ public class MonitoringCommunication extends Thread{
 		writer.close();
 	}
 
+	/**
+	 * Prints all the available services into the output stream.
+	 * The message is JSON formatted.
+	 */
 	private void query() {
 		PrintWriter writer = new PrintWriter(out);
 		String[] services = controller.getServicesNames();
@@ -109,6 +118,12 @@ public class MonitoringCommunication extends Thread{
 	}
 
 
+	/**
+	 * Helper method that pushes a file to the client.
+	 * @param file File to be uploaded
+	 * @param writer PrintWriter that handles the communication with the client
+	 * @throws Exception Throws an exception if the connection resets or the file cannot be sent within the retry limit. 
+	 */
 	private void fileProtocol(File file, PrintWriter writer) throws Exception{
 		int tries;
 		for (tries = 0; tries < RESEND_TRIES; tries++) {
@@ -145,6 +160,11 @@ public class MonitoringCommunication extends Thread{
 		}
 	}
 
+	/**
+	 * Utilitary method that pushes a file into a stream.
+	 * @param file
+	 * @throws IOException
+	 */
 	private void sendFile(File file) throws IOException {
 
 		FileInputStream in = new FileInputStream(file);
@@ -159,6 +179,11 @@ public class MonitoringCommunication extends Thread{
 		in.close();
 	}
 
+	/**
+	 * Returns the cryptographic digest of a file for integrity checks.
+	 * @param file
+	 * @return byte array with the digest
+	 */
 	private byte[] getHash(File file) {
 		try {
 			MessageDigest md = MessageDigest.getInstance(MonitoringConstants.HASH_ALGORITHM);
@@ -180,6 +205,7 @@ public class MonitoringCommunication extends Thread{
 
 		return null;
 	}
+	
 	public static void main(String[] args) throws IOException {
 		new MonitoringCommunication(7856, null).start();
 	}

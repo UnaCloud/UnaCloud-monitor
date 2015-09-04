@@ -15,6 +15,11 @@ import java.util.Properties;
 
 import client.MonitoringClient;
 
+/**
+ * Responsible for orchestrating file downloads and then organizing the obtained logs.
+ * File name format should be PICK_sensorName_hostName_logCreationDate_logFinishDate
+ * @author Emanuel Krivoy
+ */
 public class AgentFileCollector {
 
 	private static String NET_ADDRESSES = "net_addresses";
@@ -106,18 +111,36 @@ public class AgentFileCollector {
 		}
 	}
 
+	/**
+	 * Extracts the hosts unique name from the file name
+	 * @param file
+	 * @return hostname of the logged machine
+	 */
 	private static String getFileHostName(File file) {
 		return file.getName().split("_")[2];
 	}
 
+	/**
+	 * Extracts the start date of the log
+	 * @param file
+	 */
 	private static String getFileStartDate(File file) {
 		return file.getName().split("_")[3].substring(0, 10);
 	}
 
+	/**
+	 * Extracts the ID of the tool used to create this log
+	 * @param file
+	 */
 	private static String getFileSensorName(File file) {
 		return file.getName().split("_")[1];
 	}
 
+	/**
+	 * Returns the new name of the downloaded file. 
+	 * The final format is sensorName_hostName_logCreationDate_logFinishDate_downloadDate
+	 * @param file
+	 */
 	private static String getNewNameFile(File file) {
 		String sansSuffix =file.getName().substring(0, file.getName().lastIndexOf('.'));
 		String[] fileName = sansSuffix.split("_");
@@ -132,7 +155,10 @@ public class AgentFileCollector {
 		
 	}
 
-	public static void config(){
+	/**
+	 * Creates the log file
+	 */
+	private static void config(){
 		try {
 			//Create agent log file
 			PrintStream ps=new PrintStream(new FileOutputStream("log.txt",true),true){

@@ -21,8 +21,7 @@ public class Control {
 	public static void main(String[] args) {
 
 		try {
-			Control.compatibilityFileTransform(new File("C:\\Users\\TEMP\\Desktop\\Monitoreo\\trans\\"));
-			//new Control();
+			new Control();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
