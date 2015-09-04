@@ -79,7 +79,7 @@ public class MonitoringCommunicationMock extends Thread{
 	private void getFile(String services) throws Exception {
 		PrintWriter writer = new PrintWriter(out);
 		
-		File[] files = {new File("ServerTestFile1.txt"), new File("ServerTestFile2.txt")};
+		File[] files = {new File("."+File.separator+"ServerTestFile1.txt"), new File("."+File.separator+"ServerTestFile2.txt")};
 		
 		if(services.toUpperCase().equals(MonitoringConstants.ALL)) {
 			for(File file : files) {
