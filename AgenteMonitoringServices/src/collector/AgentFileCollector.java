@@ -44,12 +44,14 @@ public class AgentFileCollector {
 			System.out.println(string);
 		}
 
+		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
+		
 		for (int i = 0; i < addresses.length; i++) {
 			new MonitoringClient(addresses[i], port, tempPath).getFiles();
+			saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
 			System.out.println((i+1)+"/"+addresses.length+" completed hosts");
 		}
 
-		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
 
 	}
 
