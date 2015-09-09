@@ -31,7 +31,7 @@ public class AgentFileCollector {
 	private static String SAVE_PATH = "file_save";
 
 	public static void main(String[] args) throws Exception {
-		config();
+		 	config();
 		Properties prop = new Properties();
 		InputStream inputStream = new FileInputStream(new File("AgentFileCollector.properties"));
 		prop.load(inputStream);
@@ -92,7 +92,7 @@ public class AgentFileCollector {
 	}
 
 	/**
-	 * Saves the temp files to the saved files directory using a punctual file structure
+	 * Saves the temp files to the saved files directory using a specific file structure
 	 * @param tempPath
 	 * @param savePath
 	 */
