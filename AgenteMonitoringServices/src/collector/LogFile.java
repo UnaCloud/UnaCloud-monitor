@@ -8,7 +8,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -55,6 +57,10 @@ public abstract class LogFile {
 	protected final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
 
 	/**
+	 * Number of data fields
+	 */
+	private int numberOfFields;
+	/**
 	 * Initializes the log file with the specified parameters
 	 * @param pathToFiles Path where the log files are stored
 	 * @param valueSeparator String or regex that defines the separator of values inside the log
@@ -66,6 +72,8 @@ public abstract class LogFile {
 		this.entryDatePosition = datePosition;
 
 		logFiles = getLogFilesOnPath();	
+		
+		numberOfFields = getColumnNames().length;
 	}
 
 	/**
@@ -197,14 +205,69 @@ public abstract class LogFile {
 		}
 		return ans;
 	}
-
+	
+	/**
+	 * Sorts the log files from the earliest start date to the latest
+	 * @return sorted file array
+	 */
+	public File[] getFilesSortedByStartDate() {
+		Comparator<File> comp = new Comparator<File>() {
+			
+			@Override
+			public int compare(File o1, File o2) {
+				return (getLogStart(o1).after(getLogStart(o2))?1:-1);
+			}
+		};
+		Arrays.sort(logFiles, comp);
+		return logFiles;
+	}
+	
+	/**
+	 * Sorts the log files from the earliest finish date to the latest
+	 * @return sorted file array
+	 */
+	public File[] getFilesSortedByFinishDate() {
+		Comparator<File> comp = new Comparator<File>() {
+			
+			@Override
+			public int compare(File o1, File o2) {
+				return (getLogFinish(o1).after(getLogFinish(o2))?1:-1);
+			}
+		};
+		Arrays.sort(logFiles, comp);
+		return logFiles;
+	}
+	
+	/**
+	 * Returns the number of data fields in the log, not counting the timestamp
+	 * @return number of data fields
+	 */
+	public int getNumberOfDataFields() {
+		return numberOfFields;
+	}
+	
+	/**
+	 * Returns the earliest <i>file<i> start date in the log file pool
+	 * @return the earliest possible entry date
+	 */
+	public Date getEarliestPossibleEntry() {
+		return getLogStart(getFilesSortedByStartDate()[0]);
+	}
+	/**
+	 * Returns the earliest <i>file<i> finish date in the log file pool
+	 * @return the earliest possible entry date
+	 */
+	public Date getLatestPossibleEntry() {
+		File[] files = getFilesSortedByFinishDate();
+		return getLogFinish(files[files.length-1]);
+	}
 	/**
 	 * Returns the files that are part of the log file set
 	 * @return
 	 */
 	protected abstract File[] getLogFilesOnPath();
 	/**
-	 * Returns the names of the data fields in the pscified log file
+	 * Returns the names of the data fields in the specified log file
 	 * @param file
 	 * @return String array with the headers
 	 */
