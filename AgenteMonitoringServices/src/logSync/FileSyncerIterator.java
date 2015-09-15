@@ -1,4 +1,4 @@
-package collector;
+package logSync;
 
 import java.util.Iterator;
 

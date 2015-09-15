@@ -1,16 +1,22 @@
-package collector;
+package logSync;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
+import logFiles.OpenHardware_LogFile;
+import logFiles.Perfmon_LogFile;
+import logFiles.PowerGadget_LogFile;
+import logFiles.Sigar_LogFile;
+
 /**
  * Iterable class that returns all the entries in a set of logs that were recorded at the same second
- * @author Emanuel
+ * @author Emanuel Krivoy
 
  */
 public class FileSyncer implements Iterable<String[]>{
@@ -99,7 +105,6 @@ public class FileSyncer implements Iterable<String[]>{
 			for (LogFile logFile : logFiles) {
 				try {
 					String[] read = logFile.getDataAtSecond(nextEntry.getTime());
-					
 					//The entry for that second exists
 					if(read != null) {
 						for (int i = 0; i < read.length; i++) {
@@ -135,7 +140,14 @@ public class FileSyncer implements Iterable<String[]>{
 	 */
 	public void saveToFile(File file, String separator) throws Exception {
 		PrintWriter writer = new PrintWriter(file);
-
+		String[] columnNames = getColumnNames();
+		writer.print(columnNames[0]);
+		for (int i = 1; i < columnNames.length; i++) {
+			writer.print(separator + columnNames[i]);
+		}
+		writer.println();
+		writer.flush();
+		
 		for (String[] entry : this) {
 			writer.print(entry[0]);
 			for (int i = 1; i < entry.length; i++) {
@@ -183,5 +195,23 @@ public class FileSyncer implements Iterable<String[]>{
 	@Override
 	public Iterator<String[]> iterator() {
 		return new FileSyncerIterator(this);
+	}
+	
+	/**
+	 * Returns the final column names, ordering all the headers of the provided log files
+	 * @return String array with final column names
+	 */
+	public String[] getColumnNames() {
+		int index = 1;
+		String[] headers = new String[totalFields+1];
+		headers[0] = "SyncedTime";
+		for (LogFile logFile : logFiles) {
+			String[] logHeaders = logFile.getColumnNames();
+			for (int i = 0; i < logHeaders.length; i++) {
+				headers[index] = logHeaders[i];
+				index++;
+			}
+		}
+		return headers;
 	}
 }

@@ -1,4 +1,4 @@
-package collector;
+package logSync;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,17 +60,20 @@ public abstract class LogFile {
 	 * Number of data fields
 	 */
 	private int numberOfFields;
+	
+	private int logStartLine;
 	/**
 	 * Initializes the log file with the specified parameters
 	 * @param pathToFiles Path where the log files are stored
 	 * @param valueSeparator String or regex that defines the separator of values inside the log
 	 * @param datePosition 0-indexed position of the timestamp in a log entry
 	 */
-	public LogFile(String pathToFiles, String valueSeparator, int datePosition) {
+	public LogFile(String pathToFiles, String valueSeparator, int datePosition, int logStartLine) {
 		this.pathToFiles = pathToFiles;
 		this.valueSeparator = valueSeparator;
 		this.entryDatePosition = datePosition;
-
+		this.logStartLine = logStartLine;
+		
 		logFiles = getLogFilesOnPath();	
 		
 		numberOfFields = getColumnNames().length;
@@ -92,6 +95,7 @@ public abstract class LogFile {
 	 */
 	public String[] getDataAtSecond(Date date) throws Exception {
 		BufferedReader reader = null;
+		
 		if(fileCache!= null && dateInFileRange(date, fileCache) && entryCache.before(date))
 			reader = readerCache;
 		else{
@@ -101,6 +105,9 @@ public abstract class LogFile {
 
 			try {
 				reader = new BufferedReader(new FileReader(file));
+				for (int i = 0; i < this.logStartLine; i++) {
+					reader.readLine();
+				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}			
@@ -108,19 +115,20 @@ public abstract class LogFile {
 
 		String entry;
 		while((entry = reader.readLine()) != null) {
-			String[] data = entry.split(valueSeparator);
-			Date entryDate = getEntryDate(data[entryDatePosition]);
+			Date entryDate = getEntryDate(entry, fileCache);
 			entryDate = truncateMilis(entryDate);
 			date = truncateMilis(date);
-
+			entryCache = (Date) date.clone(); 
 			if(entryDate.equals(date)) {
 				readerCache = reader;
-				entryCache = date;
-
 				return getDataFromEntry(entry);
 			}
+			//we went past the queried date
+			if(entryDate.after(date)) {
+				fileCache = null;
+				return null;
+			}
 		}
-
 		return null;
 	}
 
@@ -193,7 +201,7 @@ public abstract class LogFile {
 	 * @param entry
 	 * @return
 	 */
-	private String[] getDataFromEntry(String entry) {
+	protected String[] getDataFromEntry(String entry) {
 		String[] temp  = entry.split(valueSeparator);
 		String[] ans = new String[temp.length-1];
 		int ansIndex = 0;
@@ -251,7 +259,7 @@ public abstract class LogFile {
 	 * @return the earliest possible entry date
 	 */
 	public Date getEarliestPossibleEntry() {
-		return getLogStart(getFilesSortedByStartDate()[0]);
+		return truncateMilis(getLogStart(getFilesSortedByStartDate()[0]));
 	}
 	/**
 	 * Returns the earliest <i>file<i> finish date in the log file pool
@@ -259,7 +267,7 @@ public abstract class LogFile {
 	 */
 	public Date getLatestPossibleEntry() {
 		File[] files = getFilesSortedByFinishDate();
-		return getLogFinish(files[files.length-1]);
+		return truncateMilis(getLogFinish(files[files.length-1]));
 	}
 	/**
 	 * Returns the files that are part of the log file set
@@ -273,9 +281,11 @@ public abstract class LogFile {
 	 */
 	protected abstract String[] getColumnNamesOnLog(File file);
 	/**
-	 * Returns the date of a log entry, given its timestamp
+	 * Returns the date of a log entry, given its timestamp and the file it was found on
 	 * @param dateField
+	 * @param file
 	 * @return Date object representing the time the entry was logged
 	 */
-	protected abstract Date getEntryDate(String dateField);
+	protected abstract Date getEntryDate(String entry, File file);
+	
 }
