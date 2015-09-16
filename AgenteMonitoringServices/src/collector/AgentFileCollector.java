@@ -24,11 +24,11 @@ import client.MonitoringClient;
  */
 public class AgentFileCollector {
 
-	private static String NET_ADDRESSES = "net_addresses";
-	private static String PORT = "port";
+	public static String NET_ADDRESSES = "net_addresses";
+	public static String PORT = "port";
 
-	private static String TEMP_PATH = "temp_path";
-	private static String SAVE_PATH = "file_save";
+	public static String TEMP_PATH = "temp_path";
+	public static String SAVE_PATH = "file_save";
 
 	public static void main(String[] args) throws Exception {
 		 	config();
