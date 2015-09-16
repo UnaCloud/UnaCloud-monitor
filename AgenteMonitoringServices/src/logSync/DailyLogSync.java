@@ -39,18 +39,28 @@ public class DailyLogSync {
 		daily_folders_path = prop.getProperty(AgentFileCollector.SAVE_PATH);
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 		
-		FilenameFilter fileFilter = new FilenameFilter() {
+		FilenameFilter dailyFileFilter = new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.matches("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 			}
 		};
-		File workRoot = new File(daily_folders_path);
 		
-		for (File dailyFolder : workRoot.listFiles(fileFilter)) {
-			for (File machine : dailyFolder.listFiles()) {
-				compatibility(new File(machine.getPath()+File.separator+"openHardware"));
+		FilenameFilter machineFileFilter = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.toUpperCase().startsWith("ISC");
+			}
+		};
+		
+		File workRoot = new File(daily_folders_path);
+		System.out.println("DailySyncer START");
+		for (File dailyFolder : workRoot.listFiles(dailyFileFilter)) {
+			for (File machine : dailyFolder.listFiles(machineFileFilter)) {
+				System.out.println("Syncing " + dailyFolder.getName() + "_" + machine.getName());
+				compatibility(new File(machine.getPath()+File.separator+"openHardware"+File.separator));
 				LogFile[] logFiles = new LogFile[4];
 				logFiles[0] = new OpenHardware_LogFile(machine+File.separator+"openHardware");
 				logFiles[1] = new Sigar_LogFile(machine+File.separator+"sigar");
@@ -60,8 +70,10 @@ public class DailyLogSync {
 				FileSyncer syncer = new FileSyncer(logFiles, dateFormat);
 				syncer.setFullTimeRange();
 				syncer.saveToFile(new File(machine+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv"), ",");
+				System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
 			}
 		}
+		System.out.println("DailySyncer END");
 	}
 	
 	//TODO delete

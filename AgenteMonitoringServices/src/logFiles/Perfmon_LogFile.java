@@ -17,7 +17,7 @@ public class Perfmon_LogFile extends LogFile{
 	}
 
 	@Override
-	protected File[] getLogFilesOnPath() {
+	protected String[] getLogFilesOnPath() {
 		FilenameFilter filter = new FilenameFilter() {
 			
 			@Override
@@ -26,7 +26,7 @@ public class Perfmon_LogFile extends LogFile{
 			}
 		};
 		
-		return new File(pathToFiles).listFiles(filter);
+		return new File(pathToFiles).list(filter);
 	}
 
 	@Override

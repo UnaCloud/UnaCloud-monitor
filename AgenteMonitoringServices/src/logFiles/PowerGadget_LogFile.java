@@ -21,7 +21,7 @@ public class PowerGadget_LogFile extends LogFile{
 	}
 
 	@Override
-	protected File[] getLogFilesOnPath() {
+	protected String[] getLogFilesOnPath() {
 		FilenameFilter filter = new FilenameFilter() {
 
 			@Override
@@ -30,7 +30,7 @@ public class PowerGadget_LogFile extends LogFile{
 			}
 		};
 
-		return new File(pathToFiles).listFiles(filter);
+		return new File(pathToFiles).list(filter);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class PowerGadget_LogFile extends LogFile{
 		Calendar fileCal = Calendar.getInstance();
 		try {
 			timestampCal.setTime(df.parse(tmp[entryDatePosition]));
-			fileCal.setTime(getLogStart(file));
+			fileCal.setTime(getLogStart(file.getName()));
 			return mergeCalendars(timestampCal, fileCal);
 		} catch (ParseException e) {
 			e.printStackTrace();

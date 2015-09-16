@@ -1,18 +1,11 @@
 package logSync;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-
-import logFiles.OpenHardware_LogFile;
-import logFiles.Perfmon_LogFile;
-import logFiles.PowerGadget_LogFile;
-import logFiles.Sigar_LogFile;
 
 /**
  * Iterable class that returns all the entries in a set of logs that were recorded at the same second
