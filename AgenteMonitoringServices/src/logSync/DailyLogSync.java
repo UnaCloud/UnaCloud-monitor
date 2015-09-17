@@ -25,93 +25,97 @@ import collector.AgentFileCollector;
  * @author Emanuel Krivoy
  */
 public class DailyLogSync {
-	
+
 	private String daily_folders_path; 
 	private SimpleDateFormat dateFormat;
-	
+
 	public DailyLogSync() throws Exception {
 		config();
-		
+
 		Properties prop = new Properties();
 		InputStream inputStream = new FileInputStream(new File("AgentFileCollector.properties"));
 		prop.load(inputStream);
-		
+
 		daily_folders_path = prop.getProperty(AgentFileCollector.SAVE_PATH);
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-		
+
 		FilenameFilter dailyFileFilter = new FilenameFilter() {
-			
+
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.matches("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 			}
 		};
-		
+
 		FilenameFilter machineFileFilter = new FilenameFilter() {
-			
+
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.toUpperCase().startsWith("ISC");
 			}
 		};
-		
+
 		File workRoot = new File(daily_folders_path);
 		System.out.println("DailySyncer START");
 		for (File dailyFolder : workRoot.listFiles(dailyFileFilter)) {
 			for (File machine : dailyFolder.listFiles(machineFileFilter)) {
-				System.out.println("Syncing " + dailyFolder.getName() + "_" + machine.getName());
-				compatibility(new File(machine.getPath()+File.separator+"openHardware"+File.separator));
-				LogFile[] logFiles = new LogFile[4];
-				logFiles[0] = new OpenHardware_LogFile(machine+File.separator+"openHardware");
-				logFiles[1] = new Sigar_LogFile(machine+File.separator+"sigar");
-				logFiles[2] = new Perfmon_LogFile(machine+File.separator+"perfmon");
-				logFiles[3] = new PowerGadget_LogFile(machine+File.separator+"powerGadget");
-				
-				FileSyncer syncer = new FileSyncer(logFiles, dateFormat);
-				syncer.setFullTimeRange();
-				syncer.saveToFile(new File(machine+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv"), ",");
-				System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
+				//Hasn't been processed before
+				if(!(new File(machine.getPath() + File.separator + ".DailySynced").exists())) {
+					System.out.println("Syncing " + dailyFolder.getName() + "_" + machine.getName());
+					compatibility(new File(machine.getPath()+File.separator+"openHardware"+File.separator));
+					LogFile[] logFiles = new LogFile[4];
+					logFiles[0] = new OpenHardware_LogFile(machine+File.separator+"openHardware");
+					logFiles[1] = new Sigar_LogFile(machine+File.separator+"sigar");
+					logFiles[2] = new Perfmon_LogFile(machine+File.separator+"perfmon");
+					logFiles[3] = new PowerGadget_LogFile(machine+File.separator+"powerGadget");
+
+					FileSyncer syncer = new FileSyncer(logFiles, dateFormat);
+					syncer.setFullTimeRange();
+					syncer.saveToFile(new File(machine.getPath()+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv"), ",");
+					new File(machine.getPath() + File.separator + ".DailySynced").createNewFile();
+					System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
+				}
 			}
 		}
 		System.out.println("DailySyncer END");
 	}
-	
+
 	//TODO delete
 	private void compatibility(File path) {
 		FilenameFilter filter = new FilenameFilter() {
-			
+
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.contains("00-00-00-000");
 			}
 		};
-		
+
 		File[] toFix = path.listFiles(filter);
 		for (File file : toFix) {
 			file.renameTo(new File(path.getPath() + File.separator + file.getName().replace("00-00-00-000", getOpenHardwareStartDate(file))));
 		}
 	}
-	
+
 	//TODO delete
 	private String getOpenHardwareStartDate(File file) {
-			try {
-				BufferedReader reader = new BufferedReader(new FileReader(file));
-				reader.readLine(); reader.readLine();
-				
-				String entry = reader.readLine();
-				String[] tmp = entry.split(",");
-				SimpleDateFormat initialFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss");
-				SimpleDateFormat finalFormat = new SimpleDateFormat("kk-mm-ss-000");
-				
-				Date entryDate = initialFormat.parse(tmp[0]);
-				reader.close();
-				return finalFormat.format(entryDate);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			reader.readLine(); reader.readLine();
+
+			String entry = reader.readLine();
+			String[] tmp = entry.split(",");
+			SimpleDateFormat initialFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss");
+			SimpleDateFormat finalFormat = new SimpleDateFormat("kk-mm-ss-000");
+
+			Date entryDate = initialFormat.parse(tmp[0]);
+			reader.close();
+			return finalFormat.format(entryDate);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
-	
+
 	/**
 	 * Creates the log file
 	 */
@@ -134,7 +138,7 @@ public class DailyLogSync {
 			e.printStackTrace();
 		}    	
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		new DailyLogSync();
 	}
