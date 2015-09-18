@@ -112,9 +112,15 @@ public class MonitoringCommunication extends Thread{
 		writer.flush();
 	}
 
-	//TODO
+	/**
+	 * Executes the given command.
+	 * Commands are defined in the MonitoringConstants class.
+	 * @param command
+	 */
 	private void execute(String command) {
-
+		if(command.toUpperCase().equals(MonitoringConstants.EXECUTE_DELETE_DONE)) {
+			controller.deleteDone();
+		}
 	}
 
 

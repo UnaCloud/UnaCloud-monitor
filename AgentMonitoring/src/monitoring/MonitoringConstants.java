@@ -11,6 +11,7 @@ public class MonitoringConstants {
 	public static final String ALL = "ALL";
 	public static final String QUERY = "QUERY";
 	public static final String EXECUTE = "EXECUTE";
+	public static final String EXECUTE_DELETE_DONE = "DELETE_DONE";
 	public static final String COMMS_OK = "OK";
 	public static final String SERVICE_NAME_SEPARATOR = ",";
 	public static final String COMMS_ERROR = "ERROR";

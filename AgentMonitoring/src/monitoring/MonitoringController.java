@@ -218,4 +218,12 @@ public class MonitoringController {
 	public File getPickPath() {
 		return new File(pickUpPath);
 	}
+	
+	/**
+	 * Deletes all the files in the done directory
+	 */
+	public void deleteDone() {
+		for(File file : new File(donePath).listFiles())
+			file.delete();
+	}
 }

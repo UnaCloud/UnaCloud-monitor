@@ -18,7 +18,7 @@ import logSync.LogFile;
 public class Sigar_LogFile extends LogFile{
 
 	public Sigar_LogFile(String pathToFiles) {
-		super(pathToFiles, ",", 0, 0);
+		super(pathToFiles, ",", 0, 1);
 	}
 
 	@Override
@@ -39,6 +39,7 @@ public class Sigar_LogFile extends LogFile{
 		String[] resp = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
+			reader.readLine();
 			String ln = reader.readLine();
 			String[] tmp = ln.split(",");
 			resp = new String[tmp.length-1];
