@@ -61,19 +61,25 @@ public class DailyLogSync {
 			for (File machine : dailyFolder.listFiles(machineFileFilter)) {
 				//Hasn't been processed before
 				if(!(new File(machine.getPath() + File.separator + ".DailySynced").exists())) {
-					System.out.println("Syncing " + dailyFolder.getName() + "_" + machine.getName());
-					compatibility(new File(machine.getPath()+File.separator+"openHardware"+File.separator));
-					LogFile[] logFiles = new LogFile[4];
-					logFiles[0] = new OpenHardware_LogFile(machine+File.separator+"openHardware");
-					logFiles[1] = new Sigar_LogFile(machine+File.separator+"sigar");
-					logFiles[2] = new Perfmon_LogFile(machine+File.separator+"perfmon");
-					logFiles[3] = new PowerGadget_LogFile(machine+File.separator+"powerGadget");
+					try {
+						System.out.println("Syncing " + dailyFolder.getName() + "_" + machine.getName());
+						compatibility(new File(machine.getPath()+File.separator+"openHardware"+File.separator));
+						LogFile[] logFiles = new LogFile[4];
+						logFiles[0] = new OpenHardware_LogFile(machine+File.separator+"openHardware");
+						logFiles[1] = new Sigar_LogFile(machine+File.separator+"sigar");
+						logFiles[2] = new Perfmon_LogFile(machine+File.separator+"perfmon");
+						logFiles[3] = new PowerGadget_LogFile(machine+File.separator+"powerGadget");
 
-					FileSyncer syncer = new FileSyncer(logFiles, dateFormat);
-					syncer.setFullTimeRange();
-					syncer.saveToFile(new File(machine.getPath()+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv"), ",");
-					new File(machine.getPath() + File.separator + ".DailySynced").createNewFile();
-					System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
+						FileSyncer syncer = new FileSyncer(logFiles, dateFormat);
+						syncer.setFullTimeRange();
+						syncer.saveToFile(new File(machine.getPath()+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv"), ",");
+						new File(machine.getPath() + File.separator + ".DailySynced").createNewFile();
+						System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
+					} catch(Exception e) {
+						System.out.println("ERROR (" + dailyFolder.getName()+"_"+machine.getName() + ")");
+						e.printStackTrace();
+						continue;
+					}
 				}
 			}
 		}

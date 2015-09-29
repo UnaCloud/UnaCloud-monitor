@@ -23,6 +23,7 @@ public class Control {
 		try {
 			new Control();
 		} catch (Exception e) {
+			e.printStackTrace();
 			// TODO: handle exception
 		}
 	}

@@ -270,6 +270,7 @@ public abstract class LogFile {
 		String[] files = getFilesSortedByFinishDate();
 		return truncateMilis(getLogFinish(files[files.length-1]));
 	}
+	
 	/**
 	 * Returns the files that are part of the log file set
 	 * @return
