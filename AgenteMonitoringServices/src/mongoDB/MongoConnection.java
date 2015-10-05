@@ -29,7 +29,6 @@ public class MongoConnection {
 	private static final String DB_NAME = "db_name";
 	private static final String DB_USER = "db_user";
 	private static final String DB_PASSWORD = "db_password";
-	private static final String DB_DBNAME = "db_dbname";
 	
 	protected String ip;
 	protected int port;
@@ -51,11 +50,9 @@ public class MongoConnection {
 		user = prop.getProperty(DB_USER);
 		password = prop.getProperty(DB_PASSWORD);
 		
-		String dbName = prop.getProperty(DB_DBNAME); 
-		
 		client = getClient();
 		
-		db = client.getDB(dbName);
+		db = client.getDB(name);
 	}
 
 	/**
@@ -82,5 +79,8 @@ public class MongoConnection {
 	public void close(){
 		client.close();
 	}
-	
+
+	public static void main(String[] args) {
+		
+	}
 }
