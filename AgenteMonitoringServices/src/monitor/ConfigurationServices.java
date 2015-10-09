@@ -116,6 +116,13 @@ public class ConfigurationServices {
 				public String getDllPath() {	
 					return prop.getProperty("DLL_PATH");
 				}
+
+				@Override
+				public String[] getHeaders() {
+					String servicesString = prop.getProperty("SIGAR_VARIABLES");
+					String[] services = servicesString.split(",");
+					return services;
+				}
 			};
 			
 			perfomConfig = new  PerfmonMonitorConfiguration() {

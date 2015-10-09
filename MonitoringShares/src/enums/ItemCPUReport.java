@@ -2,7 +2,6 @@ package enums;
 
 public enum ItemCPUReport {
 	
-	HOSTNAME("Hostname"),
 	TIME("Timestamp"),
 	TIME_MILLI("TimeMilli"),
 	USERNAME("Username"),

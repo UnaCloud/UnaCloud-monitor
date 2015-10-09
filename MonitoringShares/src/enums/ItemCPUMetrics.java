@@ -2,7 +2,6 @@ package enums;
 
 public enum ItemCPUMetrics {
 	
-	HOSTNAME("Hostname"),
 	TIME("Timestamp"),
 	TIME_MILLI("TimeMilli"),
 	OS_NAME("OSName"),
