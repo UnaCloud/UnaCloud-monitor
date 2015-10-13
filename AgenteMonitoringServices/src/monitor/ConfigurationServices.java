@@ -119,7 +119,7 @@ public class ConfigurationServices {
 
 				@Override
 				public String[] getHeaders() {
-					String servicesString = prop.getProperty("SIGAR_VARIABLES");
+					String servicesString = prop.getProperty("SIGAR_HEADERS");
 					String[] services = servicesString.split(",");
 					return services;
 				}
