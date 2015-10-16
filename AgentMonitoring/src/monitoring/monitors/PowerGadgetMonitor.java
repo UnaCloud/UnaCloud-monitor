@@ -1,11 +1,14 @@
 package monitoring.monitors;
 
-import static monitoring.MonitoringConstants.*;
+import static monitoring.MonitoringConstants.EXT;
+import static monitoring.MonitoringConstants.SEPARATOR;
+
 import java.util.Date;
 
 import monitoring.configuration.PowerGadgetConfigurationInterface;
 
 import com.losandes.utils.LocalProcessExecutor;
+
 
 /** 
  * @author Cesar
@@ -32,8 +35,9 @@ public class PowerGadgetMonitor extends AbstractMonitor {
 	
 	@Override
 	public void doMonitoring() throws Exception {		
-		fileName = recordPath+ID+SEPARATOR+df.format(new Date())+EXT;		
-		LocalProcessExecutor.executeCommand(powerlogPath+exeName+" -resolution "+(frequency*1000)+" -duration "+windowSizeTime+" -file "+fileName);		
+		fileName = recordPath+ID+SEPARATOR+df.format(new Date())+EXT;	
+		String[] cmdarray = {powerlogPath+exeName, "-resolution", ""+(frequency*1000), "-duration", ""+windowSizeTime, "-file ", fileName};
+		LocalProcessExecutor.executeCommand(cmdarray);		
 	}
 
 	@Override
