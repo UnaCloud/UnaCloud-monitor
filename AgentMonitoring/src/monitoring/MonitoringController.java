@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.TreeMap;
 
 import monitoring.configuration.ControllerConfiguration;
@@ -40,12 +42,12 @@ public class MonitoringController {
 	 * Path to folder where the files to be picked up are stored
 	 */
 	private String pickUpPath;
-	
+
 	/**
 	 * Path to folder were file that were picked up are temporarily stored
 	 */
 	private String donePath;
-	
+
 	/**
 	 * 
 	 * @param configurationClass: configuration interface used to configurate controller
@@ -171,14 +173,14 @@ public class MonitoringController {
 	 */
 	public File[] getPickupFiles(){
 		File pickups = new File(pickUpPath);
-		
+
 		FilenameFilter filtro = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.startsWith(PICKUP+SEPARATOR);
 			}
 		};
-		
+
 		return pickups.listFiles(filtro);
 	}
 	/**
@@ -188,14 +190,14 @@ public class MonitoringController {
 	 */
 	public File[] getPickupFiles(final String service){
 		File pickups = new File(pickUpPath);
-		
+
 		FilenameFilter filtro = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.startsWith(PICKUP+SEPARATOR+service);
 			}
 		};
-		
+
 		return pickups.listFiles(filtro);
 	}
 	/**
@@ -204,26 +206,43 @@ public class MonitoringController {
 	 * @return move a file to done folder.
 	 */
 	public boolean sendFileToDone(final File file){
-	    try {
-	    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
-	    	String newName = file.getName().substring(file.getName().indexOf(SEPARATOR), file.getName().length()).replace(EXT, "");
-	    	file.renameTo(new File(donePath+DONE+newName+SEPARATOR+df.format(new Date())+EXT));		
-	    	return true;
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
+			String newName = file.getName().substring(file.getName().indexOf(SEPARATOR), file.getName().length()).replace(EXT, "");
+			file.renameTo(new File(donePath+DONE+newName+SEPARATOR+df.format(new Date())+EXT));		
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
+
 	public File getPickPath() {
 		return new File(pickUpPath);
 	}
-	
+
 	/**
 	 * Deletes all the files in the done directory
 	 */
 	public void deleteDone() {
-		for(File file : new File(donePath).listFiles())
-			file.delete();
+		System.out.println("Delete Done Start");
+		Queue<File> queue = new LinkedList<File>();
+		queue.add(new File(donePath));
+
+		int count = 0;
+		
+		while(!queue.isEmpty()) {
+			File curr = queue.poll();
+			if(curr.isDirectory()) {
+				for (File file : curr.listFiles()) {
+					queue.add(file);
+				}
+			} else {
+				curr.delete();
+				count++;
+			}
+		}
+		
+		System.out.println("Done delete deleted " + count + " files");
 	}
 }

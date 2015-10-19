@@ -44,8 +44,10 @@ public class MonitoringCommunication extends Thread{
 				Socket clientSocket = serverSocket.accept();
 				reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				out = clientSocket.getOutputStream();
-				String[] command = reader.readLine().split(" ");
+				String ln = reader.readLine();
+				String[] command = ln.split(" ");
 
+				System.out.println("Monitoring communication: " + ln);
 				switch(command[0].toUpperCase()) {
 
 				case MonitoringConstants.GET:
@@ -213,6 +215,6 @@ public class MonitoringCommunication extends Thread{
 	}
 	
 	public static void main(String[] args) throws IOException {
-		new MonitoringCommunication(7856, null).start();
+		new MonitoringCommunication(720, null).start();
 	}
 }
