@@ -12,13 +12,14 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Responds to time queries over a set of log files.
  * The file must follow this name format: sensorName_hostName_logCreationDate_logFinishDate_downloadDate
  * @author Emanuel Krivoy
  */
-public abstract class LogFile {
+public abstract class LogFile implements Iterable<String>{
 
 	/**
 	 * Path where the log files are stored
@@ -49,7 +50,7 @@ public abstract class LogFile {
 	/**
 	 * Set of log files where the queried entries might be
 	 */
-	private String[] logFiles;
+	private File[] logFiles;
 
 	/**
 	 * Date format used in the log file's name
@@ -62,6 +63,7 @@ public abstract class LogFile {
 	private int numberOfFields;
 	
 	private int logStartLine;
+	
 	/**
 	 * Initializes the log file with the specified parameters
 	 * @param pathToFiles Path where the log files are stored
@@ -96,7 +98,7 @@ public abstract class LogFile {
 	public String[] getDataAtSecond(Date date) throws Exception {
 
 		//If our caches do not work for the given entry
-		if(fileCache == null || !dateInFileRange(date, fileCache.getName()) || !entryCache.before(date)) {
+		if(fileCache == null || !dateInFileRange(date, fileCache) || !entryCache.before(date)) {
 		
 			File file = getFileThatContainsEntry(date);
 			if(file == null)
@@ -139,11 +141,12 @@ public abstract class LogFile {
 	 * @return The file object with the possible entry
 	 */
 	private File getFileThatContainsEntry(Date entryDate) {
-		for (String fileName : logFiles) 
-			if(dateInFileRange(entryDate, fileName)){ 
-				fileCache = new File(pathToFiles + File.separator +fileName);
+		for (File file : logFiles)  {
+			if(dateInFileRange(entryDate, file)){ 
+				fileCache = new File(pathToFiles + File.separator +file.getName());
 				return fileCache;
 			}
+		}
 		return null;
 	}
 
@@ -153,8 +156,8 @@ public abstract class LogFile {
 	 * @param file
 	 * @return true if this date is in range, false if not
 	 */
-	private boolean dateInFileRange(Date date, String fileName) {
-		return getLogStart(fileName).getTime() <= date.getTime() && date.getTime() <= getLogFinish(fileName).getTime();
+	private boolean dateInFileRange(Date date, File file) {
+		return getLogStart(file).getTime() <= date.getTime() && date.getTime() <= getLogFinish(file).getTime();
 	}
 
 	/**
@@ -162,8 +165,9 @@ public abstract class LogFile {
 	 * @param file log file 
 	 * @return
 	 */
-	public static Date getLogStart(String fileName) {
+	public static Date getLogStart(File file) {
 		try {
+			String fileName = file.getName();
 			return dateFormat.parse(fileName.split("_")[2]);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -176,8 +180,9 @@ public abstract class LogFile {
 	 * @param file log file 
 	 * @return
 	 */
-	public static Date getLogFinish(String fileName) {
+	public static Date getLogFinish(File file) {
 		try {
+			String fileName = file.getName();
 			return dateFormat.parse(fileName.split("_")[3]);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -202,7 +207,7 @@ public abstract class LogFile {
 	 * @param entry
 	 * @return
 	 */
-	protected String[] getDataFromEntry(String entry) {
+	public String[] getDataFromEntry(String entry) {
 		String[] temp  = entry.split(valueSeparator);
 		String[] ans = new String[temp.length-1];
 		int ansIndex = 0;
@@ -219,11 +224,11 @@ public abstract class LogFile {
 	 * Sorts the log files from the earliest start date to the latest
 	 * @return sorted file array
 	 */
-	public String[] getFilesSortedByStartDate() {
-		Comparator<String> comp = new Comparator<String>() {
+	public File[] getFilesSortedByStartDate() {
+		Comparator<File> comp = new Comparator<File>() {
 			
 			@Override
-			public int compare(String o1, String o2) {
+			public int compare(File o1, File o2) {
 				return (getLogStart(o1).after(getLogStart(o2))?1:-1);
 			}
 		};
@@ -235,11 +240,11 @@ public abstract class LogFile {
 	 * Sorts the log files from the earliest finish date to the latest
 	 * @return sorted file array
 	 */
-	public String[] getFilesSortedByFinishDate() {
-		Comparator<String> comp = new Comparator<String>() {
+	public File[] getFilesSortedByFinishDate() {
+		Comparator<File> comp = new Comparator<File>() {
 			
 			@Override
-			public int compare(String o1, String o2) {
+			public int compare(File o1, File o2) {
 				return (getLogFinish(o1).after(getLogFinish(o2))?1:-1);
 			}
 		};
@@ -267,15 +272,23 @@ public abstract class LogFile {
 	 * @return the earliest possible entry date
 	 */
 	public Date getLatestPossibleEntry() {
-		String[] files = getFilesSortedByFinishDate();
+		File[] files = getFilesSortedByFinishDate();
 		return truncateMilis(getLogFinish(files[files.length-1]));
+	}
+	
+	/**
+	 * Returns an iterator that give access to all the entries of all the log files
+	 */
+	@Override
+	public Iterator<String> iterator() {
+		return new LogFileIterator(logFiles, logStartLine);
 	}
 	
 	/**
 	 * Returns the files that are part of the log file set
 	 * @return
 	 */
-	protected abstract String[] getLogFilesOnPath();
+	public abstract File[] getLogFilesOnPath();
 	/**
 	 * Returns the names of the data fields in the specified log file
 	 * @param file
@@ -288,6 +301,6 @@ public abstract class LogFile {
 	 * @param file
 	 * @return Date object representing the time the entry was logged
 	 */
-	protected abstract Date getEntryDate(String entry, File file);
+	public abstract Date getEntryDate(String entry, File file);
 	
 }

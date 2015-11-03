@@ -14,7 +14,6 @@ public class FileSyncerIterator implements Iterator<String[]>{
 	
 	public FileSyncerIterator(FileSyncer fileSyncer) {
 		this.fileSyncer = fileSyncer;
-		fileSyncer.setFullTimeRange();
 		nextEntry = fileSyncer.getNextEntry();
 	}
 	

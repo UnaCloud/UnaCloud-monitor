@@ -2,11 +2,8 @@ package logFiles;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,7 +18,7 @@ public class PowerGadget_LogFile extends LogFile{
 	}
 
 	@Override
-	protected String[] getLogFilesOnPath() {
+	public File[] getLogFilesOnPath() {
 		FilenameFilter filter = new FilenameFilter() {
 
 			@Override
@@ -30,7 +27,7 @@ public class PowerGadget_LogFile extends LogFile{
 			}
 		};
 
-		return new File(pathToFiles).list(filter);
+		return new File(pathToFiles).listFiles(filter);
 	}
 
 	@Override
@@ -53,14 +50,14 @@ public class PowerGadget_LogFile extends LogFile{
 	}
 
 	@Override
-	protected Date getEntryDate(String entry, File file) {
+	public Date getEntryDate(String entry, File file) {
 		String[] tmp = entry.split(valueSeparator);
 		SimpleDateFormat df = new SimpleDateFormat("kk:mm:ss:SSS");
 		Calendar timestampCal = Calendar.getInstance();
 		Calendar fileCal = Calendar.getInstance();
 		try {
 			timestampCal.setTime(df.parse(tmp[entryDatePosition]));
-			fileCal.setTime(getLogStart(file.getName()));
+			fileCal.setTime(getLogStart(file));
 			return mergeCalendars(timestampCal, fileCal);
 		} catch (ParseException e) {
 			e.printStackTrace();

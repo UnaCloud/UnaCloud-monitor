@@ -70,9 +70,10 @@ public class DailyLogSync {
 						logFiles[2] = new Perfmon_LogFile(machine+File.separator+"perfmon");
 						logFiles[3] = new PowerGadget_LogFile(machine+File.separator+"powerGadget");
 
-						FileSyncer syncer = new FileSyncer(logFiles, dateFormat);
-						syncer.setFullTimeRange();
-						syncer.saveToFile(new File(machine.getPath()+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv"), ",");
+						File syncedFile = new File(machine.getPath()+File.separator+dailyFolder.getName()+"_"+machine.getName()+"_sync.csv");
+						
+						FileSyncer syncer = new FileSyncer(logFiles, dateFormat, syncedFile, ",");
+						syncer.sync();
 						new File(machine.getPath() + File.separator + ".DailySynced").createNewFile();
 						System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
 					} catch(Exception e) {

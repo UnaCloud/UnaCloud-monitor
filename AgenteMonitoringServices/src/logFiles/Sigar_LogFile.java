@@ -22,7 +22,7 @@ public class Sigar_LogFile extends LogFile{
 	}
 
 	@Override
-	protected String[] getLogFilesOnPath() {
+	public File[] getLogFilesOnPath() {
 		FilenameFilter filter = new FilenameFilter() {
 
 			@Override
@@ -31,7 +31,7 @@ public class Sigar_LogFile extends LogFile{
 			}
 		};
 
-		return new File(pathToFiles).list(filter);
+		return new File(pathToFiles).listFiles(filter);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class Sigar_LogFile extends LogFile{
 	}
 
 	@Override
-	protected Date getEntryDate(String entry, File file) {
+	public Date getEntryDate(String entry, File file) {
 		entry = entry.substring(entry.indexOf('[') + 1, entry.lastIndexOf(']'));
 		String[] tmp = entry.split(",");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.SSS");
@@ -68,7 +68,7 @@ public class Sigar_LogFile extends LogFile{
 	}
 
 	@Override
-	protected String[] getDataFromEntry(String entry) {
+	public String[] getDataFromEntry(String entry) {
 		entry = entry.substring(entry.indexOf('[') + 1, entry.lastIndexOf(']'));
 		String[] tmp = entry.split(",");
 		String[] resp = new String[tmp.length-1];

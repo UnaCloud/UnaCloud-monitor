@@ -17,7 +17,7 @@ public class Perfmon_LogFile extends LogFile{
 	}
 
 	@Override
-	protected String[] getLogFilesOnPath() {
+	public File[] getLogFilesOnPath() {
 		FilenameFilter filter = new FilenameFilter() {
 			
 			@Override
@@ -26,7 +26,7 @@ public class Perfmon_LogFile extends LogFile{
 			}
 		};
 		
-		return new File(pathToFiles).list(filter);
+		return new File(pathToFiles).listFiles(filter);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class Perfmon_LogFile extends LogFile{
 	}
 
 	@Override
-	protected Date getEntryDate(String entry, File file) {
+	public Date getEntryDate(String entry, File file) {
 		String[] tmp = entry.split(valueSeparator);
 		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss.SSS");
 
@@ -63,7 +63,7 @@ public class Perfmon_LogFile extends LogFile{
 	}
 	
 	@Override
-	protected String[] getDataFromEntry(String entry) {
+	public String[] getDataFromEntry(String entry) {
 		String[] temp  = entry.split(valueSeparator);
 		String[] ans = new String[temp.length-1];
 		int ansIndex = 0;

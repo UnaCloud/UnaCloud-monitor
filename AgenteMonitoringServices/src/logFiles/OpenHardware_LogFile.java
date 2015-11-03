@@ -2,14 +2,10 @@ package logFiles;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import logSync.LogFile;
@@ -21,7 +17,7 @@ public class OpenHardware_LogFile extends LogFile{
 	}
 
 	@Override
-	protected String[] getLogFilesOnPath() {
+	public File[] getLogFilesOnPath() {
 		FilenameFilter filter = new FilenameFilter() {
 			
 			@Override
@@ -30,7 +26,7 @@ public class OpenHardware_LogFile extends LogFile{
 			}
 		};
 		
-		return new File(pathToFiles).list(filter);
+		return new File(pathToFiles).listFiles(filter);
 	}
 
 	@Override
@@ -55,7 +51,7 @@ public class OpenHardware_LogFile extends LogFile{
 	}
 
 	@Override
-	protected Date getEntryDate(String entry, File file) {
+	public Date getEntryDate(String entry, File file) {
 		String[] tmp = entry.split(valueSeparator);
 		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss");
 

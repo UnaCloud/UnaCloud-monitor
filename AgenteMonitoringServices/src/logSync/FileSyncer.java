@@ -12,67 +12,23 @@ import java.util.Iterator;
  * @author Emanuel Krivoy
 
  */
-public class FileSyncer implements Iterable<String[]>{
+public class FileSyncer extends Syncer implements Iterable<String[]>{
 
-	/**
-	 * Log files to sync
-	 */
-	private LogFile[] logFiles;
-	/**
-	 * Date format for the final log's timestamp 
-	 */
-	private DateFormat timestampformat;
-
-	/**
-	 * Next entry in the iterator 
-	 */
-	private Calendar nextEntry;
-	/**
-	 * Defines the start of the range to query
-	 */
-	private Date rangeStart;
-	/**
-	 * Defines the end date of the range to query
-	 */
-	private Date rangeFinish;
-
-	/**
-	 * Total field in the synced entries
-	 */
-	private int totalFields;
+	private File syncedFile;
+	
+	private String separator;
 
 	/**
 	 * Creates a new file syncer that tries to sync the given logs
-	 * @param logFiles 
-	 * @param timestampformat
+	 * @param logFiles log file to sync
+	 * @param timestampformat format of the timestamp that will be written on the first column of the synced file
+	 * @param syncedFile path to synced file
+	 * @param separator string used to separate the values in the synced file
 	 */
-	public FileSyncer(LogFile[] logFiles, DateFormat timestampformat) {
-		this.logFiles = logFiles;
-		this.timestampformat = timestampformat;
-
-		totalFields = 0;
-		for (LogFile logFile : logFiles) 
-			totalFields += logFile.getNumberOfDataFields();
-	}
-	
-	/**
-	 * Set the time range where it should iterate the entries
-	 * @param from range start
-	 * @param to range end
-	 */
-	public void setTimeRange(Date from, Date to) {
-		nextEntry = null;
-		rangeStart = from;
-		rangeFinish = to;
-	}
-
-	/**
-	 * Sets the time range to the widest possible
-	 */
-	public void setFullTimeRange() {
-		nextEntry = null;
-		rangeStart = getEarliestPossibleEntry();
-		rangeFinish = getLatestPossibleEntry();
+	public FileSyncer(LogFile[] logFiles, DateFormat timestampformat, File syncedFile, String separator) {
+		super(logFiles,timestampformat);
+		this.syncedFile = syncedFile;
+		this.separator = separator;
 	}
 
 	/**
@@ -127,12 +83,10 @@ public class FileSyncer implements Iterable<String[]>{
 
 	/**
 	 * Saves the synced entries of the current range into the specified file, separating the values with the given separator
-	 * @param File file where the final and synced log will be saved
-	 * @param Separator value separator
 	 * @throws Exception
 	 */
-	public void saveToFile(File file, String separator) throws Exception {
-		PrintWriter writer = new PrintWriter(file);
+	private void saveToFile() throws Exception {
+		PrintWriter writer = new PrintWriter(syncedFile);
 		String[] columnNames = getColumnNames();
 		writer.print(columnNames[0]);
 		for (int i = 1; i < columnNames.length; i++) {
@@ -153,58 +107,21 @@ public class FileSyncer implements Iterable<String[]>{
 		writer.close();
 	}
 
-	/**
-	 * Gets the earliest date where a common entry might be
-	 * @return The latest first start date of the log files
-	 */
-	public Date getEarliestPossibleEntry() {
-		Date earliestPossible = logFiles[0].getEarliestPossibleEntry();
-		for (LogFile logFile : logFiles) {
-			Date curr = logFile.getEarliestPossibleEntry();
-			if(curr.after(earliestPossible))
-				earliestPossible = curr;
+	@Override
+	public void sync() {
+		try {
+			saveToFile();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return earliestPossible;
 	}
-
+	
 	/**
-	 * Gets the lates date where a common entry might be
-	 * @return The earliest last finish date of the log files
-	 */
-	public Date getLatestPossibleEntry() {
-		Date latestPossible = logFiles[0].getLatestPossibleEntry();
-		for (LogFile logFile : logFiles) {
-			Date curr = logFile.getLatestPossibleEntry();
-			if(curr.before(latestPossible))
-				latestPossible = curr;
-		}
-		return latestPossible;
-	}
-
-	/**
-	 * Returns a full range iterator for the synced entries
+	 * Returns an iterator for the synced entries on the currently set time range
 	 * @return
 	 */
 	@Override
 	public Iterator<String[]> iterator() {
 		return new FileSyncerIterator(this);
-	}
-	
-	/**
-	 * Returns the final column names, ordering all the headers of the provided log files
-	 * @return String array with final column names
-	 */
-	public String[] getColumnNames() {
-		int index = 1;
-		String[] headers = new String[totalFields+1];
-		headers[0] = "SyncedTime";
-		for (LogFile logFile : logFiles) {
-			String[] logHeaders = logFile.getColumnNames();
-			for (int i = 0; i < logHeaders.length; i++) {
-				headers[index] = logHeaders[i];
-				index++;
-			}
-		}
-		return headers;
 	}
 }
