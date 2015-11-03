@@ -230,13 +230,20 @@ public class MonitorReportGenerator extends SigarCommandBase {
 				result+=(100 - (cpuPercentage.getIdle() * 100));
 			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES.name())){
 		        String processes = "";
+		      //Otro head para los generales 1)
+		      //TODO: procesos generales cuantos corren, cuantos son zombies
 		        long[] pids = instance.sigar.getProcList();
 		        for (long id : pids) {
 		            try {
+		            	//2)
 		            	String[] processName = instance.sigar.getProcExe(id).getName().split("\\\\");
-		                processes += "(name:"+processName[processName.length - 1] + "; virtualMemorySize:"+instance.sigar.getProcMem(id).getSize()+"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"+(id==pids[pids.length-1]?"":",");
+		                //processes += "(name:"+processName[processName.length - 1] + "; virtualMemorySize:"+instance.sigar.getProcMem(id).getSize()+"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"+(id==pids[pids.length-1]?"":",");
+		            	processes += "(name:"+processName[processName.length - 1] + 
+		            			"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+
+		            			"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"
+		            			+(id==pids[pids.length-1]?"":",");
 		            } catch (Exception ex) {
-		            }
+		            }//4)
 		        }
 		        result+=processes;
 			}else if(headers.get(i).equals(ItemCPUReport.RAM_FREE.name())){
