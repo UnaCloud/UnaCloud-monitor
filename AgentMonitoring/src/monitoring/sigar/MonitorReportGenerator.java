@@ -177,7 +177,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
 			if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.title()))
 				head += ItemCPUReport.PROCESSES_GENERAL.title() + "_(Idle:Running:Sleeping:Stopped:Zombie)";
 			else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.title()))
-				head += ItemCPUReport.PROCESSES_DETAIL.title() + "_(ExeName:User:ResidentMemory:Priority:Processor:State:Threads:CpuPercent)";
+				head += ItemCPUReport.PROCESSES_DETAIL.title() + "_(ExeName:User:ResidentMemory:Priority:Processor:State:Threads:CpuPercent:StartTime)";
 			else
 				head += headers.get(i);
 
@@ -324,6 +324,7 @@ public class MonitorReportGenerator extends SigarCommandBase {
 					":"+instance.sigar.getProcState(id).getState() +
 					":"+instance.sigar.getProcState(id).getThreads() +
 					":"+cpuPerc +
+					":"+instance.sigar.getProcTime(id).getStartTime() +
 					(last?"":";");  
 			
 			} catch(Exception e) {
