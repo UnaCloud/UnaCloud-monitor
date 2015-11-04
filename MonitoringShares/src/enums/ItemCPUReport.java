@@ -35,7 +35,8 @@ public enum ItemCPUReport {
 	NET_TX_ERRORS("NetTxErrors"),
 	NET_RX_PACKETS("NetRxPackets"),
 	NET_TX_PACKETS("NetTxPackets"),
-	PROCESSES("Processes");
+	PROCESSES_DETAIL("Processes_Detail"),
+	PROCESSES_GENERAL("Processes_General");
 	
 	private String title;
 	ItemCPUReport(String title){

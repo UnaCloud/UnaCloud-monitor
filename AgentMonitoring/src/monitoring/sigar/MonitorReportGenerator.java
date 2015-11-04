@@ -11,6 +11,7 @@ import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.NetInterfaceStat;
+import org.hyperic.sigar.ProcStat;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.Uptime;
 import org.hyperic.sigar.cmd.SigarCommandBase;
@@ -171,8 +172,15 @@ public class MonitorReportGenerator extends SigarCommandBase {
      */
     public String getReportHeaders(){
     	String head = ItemCPUReport.TIME.title()+","+ItemCPUReport.TIME_MILLI.title()+",";
-    	for (int i = 0; i < headers.size(); i++) {
-    		head+=headers.get(i);
+    	for(int i = 0; i < headers.size(); i++) {
+    		
+    		if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.name()))
+    			head += ItemCPUReport.PROCESSES_GENERAL.name() + "_(Idle:Running:Sleeping:Stopped:Zombie)";
+    		else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.name()))
+    			head += ItemCPUReport.PROCESSES_DETAIL.name() + "_(CpuPercent:User:ResidentMemory:Priority:Processor:State:Threads:ExeName)";
+    		else
+    			head += headers.get(i);
+    		
 			if(i!=headers.size()-1)head+=",";
 		}
     	return head;
@@ -228,22 +236,29 @@ public class MonitorReportGenerator extends SigarCommandBase {
 				result+=NET.getTxPackets();
 			}else if(headers.get(i).equals(ItemCPUReport.NO_CPU_IDLE.name())){
 				result+=(100 - (cpuPercentage.getIdle() * 100));
-			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.name())){
+				ProcStat stat = instance.sigar.getProcStat();
+				result += stat.getIdle() + ":" + stat.getRunning() + ":" + stat.getSleeping() + ":" + stat.getStopped() + ":" + stat.getZombie();
+			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.name())){
 		        String processes = "";
-		      //Otro head para los generales 1)
-		      //TODO: procesos generales cuantos corren, cuantos son zombies
 		        long[] pids = instance.sigar.getProcList();
 		        for (long id : pids) {
 		            try {
-		            	//2)
 		            	String[] processName = instance.sigar.getProcExe(id).getName().split("\\\\");
 		                //processes += "(name:"+processName[processName.length - 1] + "; virtualMemorySize:"+instance.sigar.getProcMem(id).getSize()+"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"+(id==pids[pids.length-1]?"":",");
-		            	processes += "(name:"+processName[processName.length - 1] + 
-		            			"; residentMemorySize:"+instance.sigar.getProcMem(id).getResident()+
-		            			"; cpuPercentage:"+instance.sigar.getProcCpu(id).getPercent()+")"
-		            			+(id==pids[pids.length-1]?"":",");
+		            	processes += processName[processName.length - 1] + 
+		            			":"+instance.sigar.getProcCpu(id).getPercent() +
+		            			":"+instance.sigar.getProcCredName(id).getUser() +
+		            			":"+instance.sigar.getProcMem(id).getResident() +
+		            			":"+instance.sigar.getProcState(id).getPriority() +
+		            			":"+instance.sigar.getProcState(id).getProcessor() +
+		            			":"+instance.sigar.getProcState(id).getState() +
+		            			":"+instance.sigar.getProcState(id).getThreads() +
+		            			":"+instance.sigar.getProcExe(id).getName() +
+		            			(id==pids[pids.length-1]?"":";");
 		            } catch (Exception ex) {
-		            }//4)
+		            	ex.printStackTrace();
+		            }
 		        }
 		        result+=processes;
 			}else if(headers.get(i).equals(ItemCPUReport.RAM_FREE.name())){
