@@ -76,60 +76,60 @@ public class MonitorReportGenerator extends SigarCommandBase {
         String result = timest+","+date.getTime()+",";
         
     	monitoring.sigar.linpackJava.Linpack CPUMflops = null;
-    	if(headersInitial.contains(ItemCPUMetrics.MFLOPS.name())||headersInitial.contains(ItemCPUMetrics.CPU_SECONDS.name())){
+    	if(headersInitial.contains(ItemCPUMetrics.MFLOPS.title())||headersInitial.contains(ItemCPUMetrics.CPU_SECONDS.title())){
     		CPUMflops = new monitoring.sigar.linpackJava.Linpack();
             CPUMflops.run_benchmark();
     	}    	
     	PhysicalMachine monitor = new PhysicalMachine();
     	CpuInfo[] infos = this.sigar.getCpuInfoList();
     	for (int i = 0; i < headersInitial.size(); i++) {
-    		if(headersInitial.get(i).equals(ItemCPUMetrics.CORES_X_SOCKETS.name())){
+    		if(headersInitial.get(i).equals(ItemCPUMetrics.CORES_X_SOCKETS.title())){
     			org.hyperic.sigar.CpuInfo CPU1 = infos[0];
     			result+=CPU1.getCoresPerSocket();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_CORES.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_CORES.title())){
     			result+= monitor.cpu.getCPUCores();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_MHZ.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_MHZ.title())){
     			 RepetitionCounter cpuMhz = new RepetitionCounter();
     			 for (CpuInfo cpu : infos)cpuMhz.add("" + cpu.getMhz());
     			 result+=cpuMhz.toString();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_MODEL.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_MODEL.title())){
     			RepetitionCounter cpuModel = new RepetitionCounter();
     	        for (CpuInfo cpu : infos)cpuModel.add(cpu.getModel());
     			result+= cpuModel.toString();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_SECONDS.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_SECONDS.title())){
     			result+=CPUMflops.getTimeinSecs();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_SOCKETS.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_SOCKETS.title())){
     			org.hyperic.sigar.CpuInfo CPU1 = infos[0];
     			result+=CPU1.getTotalSockets();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_VENDOR.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.CPU_VENDOR.title())){
     			RepetitionCounter cpuVendor = new RepetitionCounter();
     	        for (CpuInfo cpu : infos)cpuVendor.add(cpu.getVendor());
     			result+=cpuVendor.toString();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.HD_FILESYSTEM.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.HD_FILESYSTEM.title())){
     			result+=monitor.hardDisk.getHardDiskFileSystem();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.HD_SPACE.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.HD_SPACE.title())){
     			result+=monitor.hardDisk.getHardDiskSpace();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.MAC.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.MAC.title())){
     			result+= monitor.network.getNetworkMACAddress();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.MFLOPS.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.MFLOPS.title())){
     			result+=CPUMflops.getMflops();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_GATEWAY.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_GATEWAY.title())){
     			result+=monitor.network.getNetworkGateway();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_INTERFACE.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_INTERFACE.title())){
     			result+=monitor.network.getNetworkInterface();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_IP.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_IP.title())){
     			result+=monitor.network.getNetworkIPAddress();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_MASK.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.NET_MASK.title())){
     			result+=monitor.network.getNetworkNetmask();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.OS_ARQUITECTURE.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.OS_ARQUITECTURE.title())){
     			result+=monitor.operatingSystem.getOperatingSystemArchitect();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.OS_NAME.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.OS_NAME.title())){
     			result+=monitor.operatingSystem.getOperatingSystemName();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.OS_VERSION.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.OS_VERSION.title())){
     			result+=monitor.operatingSystem.getOperatingSystemVersion();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.RAM_SIZE.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.RAM_SIZE.title())){
     			result+=monitor.memory.getRAMMemorySize();
-    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.SWAP_SIZE.name())){
+    		}else if(headersInitial.get(i).equals(ItemCPUMetrics.SWAP_SIZE.title())){
     			result+=monitor.memory.getSwapMemorySize();
     		}
     		if(i!=headersInitial.size()-1)result+=",";
@@ -174,10 +174,10 @@ public class MonitorReportGenerator extends SigarCommandBase {
     	String head = ItemCPUReport.TIME.title()+","+ItemCPUReport.TIME_MILLI.title()+",";
     	for(int i = 0; i < headers.size(); i++) {
     		
-    		if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.name()))
-    			head += ItemCPUReport.PROCESSES_GENERAL.name() + "_(Idle:Running:Sleeping:Stopped:Zombie)";
-    		else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.name()))
-    			head += ItemCPUReport.PROCESSES_DETAIL.name() + "_(CpuPercent:User:ResidentMemory:Priority:Processor:State:Threads:ExeName)";
+    		if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.title()))
+    			head += ItemCPUReport.PROCESSES_GENERAL.title() + "_(Idle:Running:Sleeping:Stopped:Zombie)";
+    		else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.title()))
+    			head += ItemCPUReport.PROCESSES_DETAIL.title() + "_(CpuPercent:User:ResidentMemory:Priority:Processor:State:Threads:ExeName)";
     		else
     			head += headers.get(i);
     		
@@ -200,46 +200,46 @@ public class MonitorReportGenerator extends SigarCommandBase {
         CpuPerc cpuPercentage = instance.sigar.getCpuPerc();
         Cpu cpu = instance.sigar.getCpu();
     	for (int i = 0; i < headers.size(); i++) {
-    		if(headers.get(i).equals(ItemCPUReport.CPU_COMBINED.name())){
+    		if(headers.get(i).equals(ItemCPUReport.CPU_COMBINED.title())){
     			result+=cpuPercentage.getCombined() * 100;
-    		}else if(headers.get(i).equals(ItemCPUReport.CPU_IDLE.name())){
+    		}else if(headers.get(i).equals(ItemCPUReport.CPU_IDLE.title())){
     			result+=cpuPercentage.getIdle() * 100;
-    		}else if(headers.get(i).equals(ItemCPUReport.CPU_NICE.name())){
+    		}else if(headers.get(i).equals(ItemCPUReport.CPU_NICE.title())){
 			    result+=cpuPercentage.getNice() * 100;
-			}else if(headers.get(i).equals(ItemCPUReport.CPU_SYS.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.CPU_SYS.title())){
 				result+=cpuPercentage.getSys() * 100;
-			}else if(headers.get(i).equals(ItemCPUReport.CPU_USER.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.CPU_USER.title())){
 				result+=cpuPercentage.getUser() * 100;
-			}else if(headers.get(i).equals(ItemCPUReport.CPU_WAIT.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.CPU_WAIT.title())){
 				result+=cpuPercentage.getWait() * 100;
-			}else if(headers.get(i).equals(ItemCPUReport.HD_FREE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.HD_FREE.title())){
 				result+=monitor.hardDisk.getHardDiskFreeSpace();
-			}else if(headers.get(i).equals(ItemCPUReport.HD_USED.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.HD_USED.title())){
 				result+=monitor.hardDisk.getHardDiskUsedSpace();
-			}else if(headers.get(i).equals(ItemCPUReport.MEM_FREE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.MEM_FREE.title())){
 				result+=MEM.getFreePercent();
-			}else if(headers.get(i).equals(ItemCPUReport.MEM_USED.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.MEM_USED.title())){
 				result+= MEM.getUsedPercent();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_RX_BYTES.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_RX_BYTES.title())){
 				result+=NET.getRxBytes();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_RX_ERRORS.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_RX_ERRORS.title())){
 				result+=NET.getRxErrors();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_RX_PACKETS.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_RX_PACKETS.title())){
 				result+=NET.getRxPackets();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_SPEED.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_SPEED.title())){
 				result+=NET.getSpeed();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_TX_BYTES.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_TX_BYTES.title())){
 				result+= NET.getTxBytes();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_TX_ERRORS.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_TX_ERRORS.title())){
 				result+= NET.getTxErrors();
-			}else if(headers.get(i).equals(ItemCPUReport.NET_TX_PACKETS.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NET_TX_PACKETS.title())){
 				result+=NET.getTxPackets();
-			}else if(headers.get(i).equals(ItemCPUReport.NO_CPU_IDLE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.NO_CPU_IDLE.title())){
 				result+=(100 - (cpuPercentage.getIdle() * 100));
-			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.title())){
 				ProcStat stat = instance.sigar.getProcStat();
 				result += stat.getIdle() + ":" + stat.getRunning() + ":" + stat.getSleeping() + ":" + stat.getStopped() + ":" + stat.getZombie();
-			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.title())){
 		        String processes = "";
 		        long[] pids = instance.sigar.getProcList();
 		        for (long id : pids) {
@@ -261,32 +261,32 @@ public class MonitorReportGenerator extends SigarCommandBase {
 		            }
 		        }
 		        result+=processes;
-			}else if(headers.get(i).equals(ItemCPUReport.RAM_FREE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.RAM_FREE.title())){
 				result+=monitor.memory.getRAMMemoryFree();
-			}else if(headers.get(i).equals(ItemCPUReport.RAM_USED.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.RAM_USED.title())){
 				result+=monitor.memory.getRAMMemoryUsed();
-			}else if(headers.get(i).equals(ItemCPUReport.SWAP_FREE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.SWAP_FREE.title())){
 				result+=monitor.memory.getSwapMemoryFree();
-			}else if(headers.get(i).equals(ItemCPUReport.SWAP_PAGE_IN.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.SWAP_PAGE_IN.title())){
 				result+=monitor.memory.getSwapMemoryPageIn();
-			}else if(headers.get(i).equals(ItemCPUReport.SWAP_PAGE_OUT.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.SWAP_PAGE_OUT.title())){
 				result+=monitor.memory.getSwapMemoryPageOut();
-			}else if(headers.get(i).equals(ItemCPUReport.SWAP_USED.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.SWAP_USED.title())){
 				result+= monitor.memory.getSwapMemoryUsed();
-			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_IDLE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_IDLE.title())){
 				result+=cpu.getIdle();
-			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_NICE.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_NICE.title())){
 				result+=cpu.getNice();
-			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_SYS.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_SYS.title())){
 				result+=cpu.getSys();
-			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_USER.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_USER.title())){
 				result+=cpu.getUser();
-			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_WAIT.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.TOTAL_WAIT.title())){
 				result+=cpu.getWait();
-			}else if(headers.get(i).equals(ItemCPUReport.UP_TIME.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.UP_TIME.title())){
 				Uptime UPTIME = instance.sigar.getUptime();
 				result+=UPTIME.getUptime();
-			}else if(headers.get(i).equals(ItemCPUReport.USERNAME.name())){
+			}else if(headers.get(i).equals(ItemCPUReport.USERNAME.title())){
 				result+=OperatingSystem.getUserName();
 			}
     		if(i!=headers.size()-1)result+=",";
