@@ -1,20 +1,27 @@
 package monitor;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.Properties;
 
+import monitoring.MonitoringController;
+import monitoring.monitors.OpenHardwareMonitor;
+import monitoring.monitors.PerfmonMonitor;
+import monitoring.monitors.PowerGadgetMonitor;
+import monitoring.monitors.SigarMonitor;
 import server.MonitoringCommunication;
 import utils.MonitoringToolEnum;
-import monitoring.MonitoringController;
-import monitoring.monitors.*;
 
 public class Control {
-	public static final int PORT = 720;
+	public static final String PORT = "COMMUNICATIONS_PORT";
+	public int port;
 
 	public static MonitoringController controller;
 
@@ -24,11 +31,11 @@ public class Control {
 			new Control();
 		} catch (Exception e) {
 			e.printStackTrace();
-			// TODO: handle exception
 		}
 	}
 
 	public Control() {
+		loadPort();
 		config();
 		prepareServices();
 		compatibilityFileTransform(controller.getPickPath());
@@ -42,7 +49,7 @@ public class Control {
 			controller.addMonitoringTool(new PowerGadgetMonitor(MonitoringToolEnum.POWER_GADGET.getName(), config.powerConfig));
 			controller.addMonitoringTool(new OpenHardwareMonitor(MonitoringToolEnum.OPEN_HARDWARE.getName(), config.ohConfig));
 			controller.addMonitoringTool(new PerfmonMonitor(MonitoringToolEnum.PERFMON.getName(), config.perfomConfig));			
-			MonitoringCommunication com = new MonitoringCommunication(PORT, controller);			
+			MonitoringCommunication com = new MonitoringCommunication(port, controller);			
 			controller.configureServices();//TODO join 		
 			com.start();
 			if(config.end>0){
@@ -154,5 +161,20 @@ public class Control {
 			file.renameTo(new File(pickPath + File.separator + newName));
 		}
 
+	}
+	
+	private void loadPort() {
+		port = 720;
+		
+		Properties prop = new Properties();
+		InputStream inputStream;
+		try {
+			inputStream = new FileInputStream(new File("config.properties"));
+			prop.load(inputStream);
+			
+			port = Integer.parseInt(prop.getProperty(PORT));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

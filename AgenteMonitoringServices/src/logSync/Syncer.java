@@ -21,11 +21,6 @@ public abstract class Syncer{
 	protected DateFormat timestampformat;
 
 	/**
-	 * Next entry in the iterator 
-	 */
-	//TODO
-	protected Calendar nextEntry;
-	/**
 	 * Defines the start of the range to query
 	 */
 	protected Date rangeStart;
@@ -61,18 +56,18 @@ public abstract class Syncer{
 	 * @param to range end
 	 */
 	public void setTimeRange(Date from, Date to) {
-		nextEntry = null;
 		rangeStart = from;
 		rangeFinish = to;
+		onRangeReset();
 	}
 
 	/**
 	 * Sets the current time range to the longest possible one
 	 */
 	public void setFullTimeRange() {
-		nextEntry = null;
 		rangeStart = getEarliestPossibleEntry();
 		rangeFinish = getLatestPossibleEntry();
+		onRangeReset();
 	}
 
 	/**
@@ -122,7 +117,12 @@ public abstract class Syncer{
 	}
 	
 	/**
-	 * Syncs the entries of the log file in the current time range 
+	 * Method that is called after every range reset
+	 */
+	protected abstract void onRangeReset();
+	
+	/**
+	 * Syncs the entries of the log files in the current time range 
 	 */
 	public abstract void sync();
 }

@@ -13,7 +13,7 @@ import logSync.LogFile;
 public class OpenHardware_LogFile extends LogFile{
 
 	public OpenHardware_LogFile(String pathToFiles) {
-		super(pathToFiles, ",", 0, 2);
+		super(pathToFiles, ",", 0, 2, "OpenHardware");
 	}
 
 	@Override

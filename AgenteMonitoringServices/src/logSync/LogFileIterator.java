@@ -2,9 +2,8 @@ package logSync;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -12,8 +11,13 @@ import java.util.Iterator;
  * @author Emanuel
  * Iterator that give access to all the entries of all the log files
  */
-public class LogFileIterator implements Iterator<String>{
+public class LogFileIterator<T> implements Iterator<String[]>{
 
+	/**
+	 * LogFile object to iterate
+	 */
+	private LogFile logFile;
+	
 	/**
 	 * Log files from the LogFile object
 	 */
@@ -30,12 +34,16 @@ public class LogFileIterator implements Iterator<String>{
 	private int logStartLine;
 	
 	private BufferedReader reader;
+	
+	private String currentEntry;
 	private String nextEntry;
 	
-	public LogFileIterator(File[] logFiles, int logStartLine) {
+	public LogFileIterator(LogFile logFile) {
 		
-		this.logFiles = logFiles;
-		this.logStartLine = logStartLine;
+		this.logFile = logFile;
+		this.logFiles = logFile.getFiles();
+		this.logStartLine = logFile.getLogStartLine();
+		
 		nextFile = 0;
 		
 		try {
@@ -52,9 +60,12 @@ public class LogFileIterator implements Iterator<String>{
 		return nextEntry != null;
 	}
 
+	/**
+	 * Returns the next's entry data
+	 */
 	@Override
-	public String next() {
-		String ret = nextEntry;
+	public String[] next() {
+		currentEntry = nextEntry;
 
 		try {
 			nextEntry = reader.readLine();
@@ -66,7 +77,7 @@ public class LogFileIterator implements Iterator<String>{
 			e.printStackTrace();
 		}
 		
-		return  ret;
+		return  logFile.getDataFromEntry(currentEntry);
 	}
 
 	/**
@@ -90,4 +101,20 @@ public class LogFileIterator implements Iterator<String>{
 	public void remove() {
 	}
 
+	/**
+	 * Returns the correctly formatted timestamp of the current entry
+	 * @return timestamp of the current entry
+	 */
+	public String getCurrentTimestamp() {
+		Date timestamp = logFile.getEntryDate(currentEntry, logFiles[nextFile-1]);
+		return LogFile.dateFormat.format(timestamp);
+	}
+	
+	/**
+	 * Returns the hostname of the machine that created of the current entry
+	 * @return hostname fo the current entry
+	 */
+	public String getCurrentHostname() {
+		return LogFile.getLogHostname(logFiles[nextFile-1]);
+	}
 }

@@ -13,7 +13,7 @@ import logSync.LogFile;
 public class Perfmon_LogFile extends LogFile{
 
 	public Perfmon_LogFile(String pathToFiles) {
-		super(pathToFiles, ",", 0, 2);
+		super(pathToFiles, ",", 0, 2, "Perfmon");
 	}
 
 	@Override

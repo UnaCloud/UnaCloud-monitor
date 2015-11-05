@@ -14,9 +14,20 @@ import java.util.Iterator;
  */
 public class FileSyncer extends Syncer implements Iterable<String[]>{
 
+	/**
+	 * Final, and synced, log file
+	 */
 	private File syncedFile;
 	
+	/**
+	 * String used to separate value in the final log file
+	 */
 	private String separator;
+	
+	/**
+	 * Next entry in the iterator 
+	 */
+	private Calendar nextEntry;
 
 	/**
 	 * Creates a new file syncer that tries to sync the given logs
@@ -114,6 +125,11 @@ public class FileSyncer extends Syncer implements Iterable<String[]>{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void onRangeReset() {
+		nextEntry = null;
 	}
 	
 	/**

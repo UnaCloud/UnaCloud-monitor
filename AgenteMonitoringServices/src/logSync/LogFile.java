@@ -19,7 +19,7 @@ import java.util.Iterator;
  * The file must follow this name format: sensorName_hostName_logCreationDate_logFinishDate_downloadDate
  * @author Emanuel Krivoy
  */
-public abstract class LogFile implements Iterable<String>{
+public abstract class LogFile implements Iterable<String[]>{
 
 	/**
 	 * Path where the log files are stored
@@ -55,29 +55,38 @@ public abstract class LogFile implements Iterable<String>{
 	/**
 	 * Date format used in the log file's name
 	 */
-	protected final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
+	public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-kk-mm-ss-SSS");
 
 	/**
 	 * Number of data fields
 	 */
 	private int numberOfFields;
-	
+
+	/**
+	 * Line where the log data starts
+	 */
 	private int logStartLine;
-	
+
+	/**
+	 * Unique identifier for the set of log files
+	 */
+	protected String logName;
+
 	/**
 	 * Initializes the log file with the specified parameters
 	 * @param pathToFiles Path where the log files are stored
 	 * @param valueSeparator String or regex that defines the separator of values inside the log
 	 * @param datePosition 0-indexed position of the timestamp in a log entry
 	 */
-	public LogFile(String pathToFiles, String valueSeparator, int datePosition, int logStartLine) {
+	public LogFile(String pathToFiles, String valueSeparator, int datePosition, int logStartLine, String logName) {
 		this.pathToFiles = pathToFiles;
 		this.valueSeparator = valueSeparator;
 		this.entryDatePosition = datePosition;
 		this.logStartLine = logStartLine;
-		
+		this.logName = logName;
+
 		logFiles = getLogFilesOnPath();	
-		
+
 		numberOfFields = getColumnNames().length;
 	}
 
@@ -99,7 +108,7 @@ public abstract class LogFile implements Iterable<String>{
 
 		//If our caches do not work for the given entry
 		if(fileCache == null || !dateInFileRange(date, fileCache) || !entryCache.before(date)) {
-		
+
 			File file = getFileThatContainsEntry(date);
 			if(file == null)
 				return null;
@@ -114,7 +123,7 @@ public abstract class LogFile implements Iterable<String>{
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}	
-			
+
 		}
 
 		String entry;
@@ -191,6 +200,16 @@ public abstract class LogFile implements Iterable<String>{
 	}
 
 	/**
+	 * Returns the hostname of the log's producer
+	 * @param file log file 
+	 * @return
+	 */
+	public static String getLogHostname(File file) {
+		String fileName = file.getName();
+		return fileName.split("_")[1];
+	}
+
+	/**
 	 * Sets the specified date's milis to 0
 	 * @param date
 	 * @return
@@ -219,14 +238,30 @@ public abstract class LogFile implements Iterable<String>{
 		}
 		return ans;
 	}
-	
+
+	/**
+	 * Get the line number where the log data starts
+	 * @return line number where the data starts
+	 */
+	public int getLogStartLine() {
+		return logStartLine;
+	}
+
+	/**
+	 * Returns the log files
+	 * @return array of log files
+	 */
+	public File[] getFiles() {
+		return logFiles;
+	}
+
 	/**
 	 * Sorts the log files from the earliest start date to the latest
 	 * @return sorted file array
 	 */
 	public File[] getFilesSortedByStartDate() {
 		Comparator<File> comp = new Comparator<File>() {
-			
+
 			@Override
 			public int compare(File o1, File o2) {
 				return (getLogStart(o1).after(getLogStart(o2))?1:-1);
@@ -235,14 +270,14 @@ public abstract class LogFile implements Iterable<String>{
 		Arrays.sort(logFiles, comp);
 		return logFiles;
 	}
-	
+
 	/**
 	 * Sorts the log files from the earliest finish date to the latest
 	 * @return sorted file array
 	 */
 	public File[] getFilesSortedByFinishDate() {
 		Comparator<File> comp = new Comparator<File>() {
-			
+
 			@Override
 			public int compare(File o1, File o2) {
 				return (getLogFinish(o1).after(getLogFinish(o2))?1:-1);
@@ -251,7 +286,7 @@ public abstract class LogFile implements Iterable<String>{
 		Arrays.sort(logFiles, comp);
 		return logFiles;
 	}
-	
+
 	/**
 	 * Returns the number of data fields in the log, not counting the timestamp
 	 * @return number of data fields
@@ -259,7 +294,7 @@ public abstract class LogFile implements Iterable<String>{
 	public int getNumberOfDataFields() {
 		return numberOfFields;
 	}
-	
+
 	/**
 	 * Returns the earliest <i>file<i> start date in the log file pool
 	 * @return the earliest possible entry date
@@ -275,26 +310,36 @@ public abstract class LogFile implements Iterable<String>{
 		File[] files = getFilesSortedByFinishDate();
 		return truncateMilis(getLogFinish(files[files.length-1]));
 	}
-	
+
+	/**
+	 * Returns the unique name for the log set
+	 * @return unique name for the log set
+	 */
+	public String getLogName() {
+		return logName;
+	}
+
 	/**
 	 * Returns an iterator that give access to all the entries of all the log files
 	 */
 	@Override
-	public Iterator<String> iterator() {
-		return new LogFileIterator(logFiles, logStartLine);
+	public LogFileIterator<String[]> iterator() {
+		return new LogFileIterator<String[]>(this);
 	}
-	
+
 	/**
 	 * Returns the files that are part of the log file set
 	 * @return
 	 */
 	public abstract File[] getLogFilesOnPath();
+	
 	/**
 	 * Returns the names of the data fields in the specified log file
 	 * @param file
 	 * @return String array with the headers
 	 */
 	protected abstract String[] getColumnNamesOnLog(File file);
+	
 	/**
 	 * Returns the date of a log entry, given its timestamp and the file it was found on
 	 * @param dateField
@@ -302,5 +347,5 @@ public abstract class LogFile implements Iterable<String>{
 	 * @return Date object representing the time the entry was logged
 	 */
 	public abstract Date getEntryDate(String entry, File file);
-	
+
 }

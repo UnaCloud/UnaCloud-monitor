@@ -14,7 +14,7 @@ import logSync.LogFile;
 public class PowerGadget_LogFile extends LogFile{
 
 	public PowerGadget_LogFile(String pathToFiles) {
-		super(pathToFiles, ",", 0, 1);
+		super(pathToFiles, ",", 0, 1,"PowerGadget");
 	}
 
 	@Override
