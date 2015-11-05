@@ -117,9 +117,10 @@ public abstract class Syncer{
 	}
 	
 	/**
-	 * Method that is called after every range reset
+	 * Method that is called after every range reset. Should be overwritten as needed.
 	 */
-	protected abstract void onRangeReset();
+	protected void onRangeReset() {
+	}
 	
 	/**
 	 * Syncs the entries of the log files in the current time range 
