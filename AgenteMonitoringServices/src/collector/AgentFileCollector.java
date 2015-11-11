@@ -31,7 +31,7 @@ public class AgentFileCollector {
 	public static String SAVE_PATH = "file_save";
 
 	public static void main(String[] args) throws Exception {
-		 	config();
+		config();
 		Properties prop = new Properties();
 		InputStream inputStream = new FileInputStream(new File("AgentFileCollector.properties"));
 		prop.load(inputStream);
@@ -45,14 +45,12 @@ public class AgentFileCollector {
 		}
 
 		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
-		
+
 		for (int i = 0; i < addresses.length; i++) {
 			new MonitoringClient(addresses[i], port, tempPath).getFiles();
 			saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
 			System.out.println((i+1)+"/"+addresses.length+" completed hosts");
 		}
-
-
 	}
 
 	/**
@@ -161,7 +159,7 @@ public class AgentFileCollector {
 		newName += "_" + df.format(new Date());
 		newName += file.getName().substring(file.getName().lastIndexOf('.'), file.getName().length());
 		return newName;
-		
+
 	}
 
 	/**

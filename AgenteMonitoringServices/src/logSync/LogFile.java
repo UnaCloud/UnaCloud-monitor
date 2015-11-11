@@ -95,7 +95,7 @@ public abstract class LogFile implements Iterable<String[]>{
 	 * @return String array with the headers
 	 */
 	public String[] getColumnNames() {
-		return getColumnNamesOnLog(new File(pathToFiles + File.separator + logFiles[0]));
+		return getColumnNamesOnLog(logFiles[0]);
 	}
 
 	/**

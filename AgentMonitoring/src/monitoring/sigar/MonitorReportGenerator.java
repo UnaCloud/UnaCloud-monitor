@@ -175,9 +175,9 @@ public class MonitorReportGenerator extends SigarCommandBase {
 		for(int i = 0; i < headers.size(); i++) {
 
 			if(headers.get(i).equals(ItemCPUReport.PROCESSES_GENERAL.title()))
-				head += ItemCPUReport.PROCESSES_GENERAL.title() + "_(Idle:Running:Sleeping:Stopped:Zombie)";
+				head += ":#MULTI#:Idle#:Running#:Sleeping#:Stopped#:Zombie#:"+ItemCPUReport.PROCESSES_GENERAL.title();
 			else if(headers.get(i).equals(ItemCPUReport.PROCESSES_DETAIL.title()))
-				head += ItemCPUReport.PROCESSES_DETAIL.title() + "_(ExeName:User:ResidentMemory:Priority:Processor:State:Threads:CpuPercent:StartTime)";
+				head += ":#MULTI#:ExeName#:User#:ResidentMemory#:Priority#:Processor#:State#:Threads#:CpuPercent#:StartTime#:"+ItemCPUReport.PROCESSES_DETAIL.title();
 			else
 				head += headers.get(i);
 

@@ -20,6 +20,7 @@ public class MongoSyncer extends Syncer{
 
 	private final static String TIMESTAMP = "Timestamp";
 	private final static String HOSTNAME = "Hostname";
+	private static final String UNIX_TIMESTAMP = "UnixTimestamp";
 
 	/**
 	 * Collection where the entries will be synced
@@ -36,11 +37,12 @@ public class MongoSyncer extends Syncer{
 	 * @param timestamp
 	 * @param hostname
 	 */
-	public void createRecord(String timestamp, String hostname) {
+	public void createRecord(String timestamp, String hostname, long unixTimestamp) {
 		BasicDBObject basicRecord = new BasicDBObject();
 		basicRecord.append(TIMESTAMP, timestamp);
 		basicRecord.append(HOSTNAME, hostname);
-
+		basicRecord.append(UNIX_TIMESTAMP, unixTimestamp);
+		
 		DBCursor cursor = SyncCollection.find(basicRecord).limit(1);
 
 		if(cursor.count() == 0)
@@ -77,17 +79,26 @@ public class MongoSyncer extends Syncer{
 						continue;
 				} catch (ParseException e) {
 					e.printStackTrace();
+					continue;
 				}
 
 
 				BasicDBObject logFileEntry = new BasicDBObject(); 
-
 				for (int i = 0; i < entry.length; i++)
 					logFileEntry.append(headers[i], entry[i]);
 
-				createRecord(timestamp, hostname);
+				try {
+					createRecord(timestamp, hostname, LogFile.dateFormat.parse(timestamp).getTime());
+				} catch (ParseException e) {
+					e.printStackTrace();
+					continue;
+				}
 
-				addToRecord(timestamp, hostname, logFileEntry);
+				BasicDBObject record = new BasicDBObject();
+				
+				record.append(logFile.getLogName(), logFileEntry);
+
+				addToRecord(timestamp, hostname, record);
 			}
 		}
 	}
