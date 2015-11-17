@@ -72,7 +72,8 @@ public class MongoSyncer extends Syncer{
 				String[] headers = logFile.getColumnNames();
 
 				String hostname = iterator.getCurrentHostname();
-				String timestamp = iterator.getCurrentTimestamp();
+				Date creationTime = LogFile.truncateMilis(iterator.getCurrentTimestamp());
+				String timestamp = LogFile.dateFormat.format(creationTime);
 
 				try {
 					if(LogFile.dateFormat.parse(timestamp).before(rangeStart) || LogFile.dateFormat.parse(timestamp).after(rangeFinish))

@@ -105,9 +105,9 @@ public class LogFileIterator<T> implements Iterator<String[]>{
 	 * Returns the correctly formatted timestamp of the current entry
 	 * @return timestamp of the current entry
 	 */
-	public String getCurrentTimestamp() {
+	public Date getCurrentTimestamp() {
 		Date timestamp = logFile.getEntryDate(currentEntry, logFiles[nextFile-1]);
-		return LogFile.dateFormat.format(timestamp);
+		return timestamp;
 	}
 	
 	/**

@@ -214,7 +214,7 @@ public abstract class LogFile implements Iterable<String[]>{
 	 * @param date
 	 * @return
 	 */
-	private Date truncateMilis(Date date) {
+	public static Date truncateMilis(Date date) {
 		Calendar cal  = Calendar.getInstance();
 		cal.setTime(date);
 		cal.set(Calendar.MILLISECOND, 0);
