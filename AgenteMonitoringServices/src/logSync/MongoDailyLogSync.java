@@ -61,7 +61,7 @@ public class MongoDailyLogSync {
 		for (File dailyFolder : workRoot.listFiles(dailyFileFilter)) {
 			for (File machine : dailyFolder.listFiles(machineFileFilter)) {
 				//Hasn't been processed before
-				if(!(new File(machine.getPath() + File.separator + ".MongoDailySynced").exists())) {
+				if(!(new File(machine.getPath() + File.separator + ".mongoDailySynced").exists())) {
 					try {
 						System.out.println("Syncing " + dailyFolder.getName() + "_" + machine.getName());
 						//compatibility(new File(machine.getPath()+File.separator+"openHardware"+File.separator));
@@ -75,7 +75,7 @@ public class MongoDailyLogSync {
 						MongoConnection connection = new MongoConnection();
 						MongoSyncer syncer = new MongoSyncer(logFiles, dateFormat, connection);
 						syncer.sync();
-						new File(machine.getPath() + File.separator + ".MongoDailySynced").createNewFile();
+						new File(machine.getPath() + File.separator + ".mongoDailySynced").createNewFile();
 						System.out.println("Synced " + dailyFolder.getName() + "_" + machine.getName());
 					} catch(Exception e) {
 						System.out.println("ERROR (" + dailyFolder.getName()+"_"+machine.getName() + ")");

@@ -87,7 +87,9 @@ public abstract class LogFile implements Iterable<String[]>{
 
 		logFiles = getLogFilesOnPath();	
 
-		numberOfFields = getColumnNames().length;
+		if(logFiles != null)
+			numberOfFields = getColumnNames().length;
+
 	}
 
 	/**
@@ -95,7 +97,10 @@ public abstract class LogFile implements Iterable<String[]>{
 	 * @return String array with the headers
 	 */
 	public String[] getColumnNames() {
-		return getColumnNamesOnLog(logFiles[0]);
+		if(logFiles != null)
+			return getColumnNamesOnLog(logFiles[0]);
+		else 
+			return null;
 	}
 
 	/**

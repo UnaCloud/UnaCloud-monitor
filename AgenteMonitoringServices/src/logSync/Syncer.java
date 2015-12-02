@@ -107,6 +107,9 @@ public abstract class Syncer{
 		String[] headers = new String[totalFields+1];
 		headers[0] = "SyncedTime";
 		for (LogFile logFile : logFiles) {
+			if(logFile == null)
+				continue;
+			
 			String[] logHeaders = logFile.getColumnNames();
 			for (int i = 0; i < logHeaders.length; i++) {
 				headers[index] = logHeaders[i];

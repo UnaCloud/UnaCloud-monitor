@@ -39,10 +39,6 @@ public class AgentFileCollector {
 		String[] addresses = getNetAddresses(prop.getProperty(NET_ADDRESSES)); 
 		int port = Integer.parseInt(prop.getProperty(PORT));
 		String tempPath = prop.getProperty(TEMP_PATH);		
-		System.out.println();
-		for (String string : addresses) {
-			System.out.println(string);
-		}
 
 		saveFiles(prop.getProperty(TEMP_PATH), prop.getProperty(SAVE_PATH));
 

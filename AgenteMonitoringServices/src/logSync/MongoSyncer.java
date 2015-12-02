@@ -42,11 +42,12 @@ public class MongoSyncer extends Syncer{
 		basicRecord.append(TIMESTAMP, timestamp);
 		basicRecord.append(HOSTNAME, hostname);
 		basicRecord.append(UNIX_TIMESTAMP, unixTimestamp);
-		
-		DBCursor cursor = SyncCollection.find(basicRecord).limit(1);
 
-		if(cursor.count() == 0)
+		DBCursor cursor = SyncCollection.find(basicRecord).limit(1);
+		
+		if(cursor.count() == 0) {
 			SyncCollection.insert(basicRecord);
+		}	
 	}
 
 	/**
@@ -59,48 +60,49 @@ public class MongoSyncer extends Syncer{
 		BasicDBObject query = new BasicDBObject();
 		query.append(TIMESTAMP, timestamp);
 		query.append(HOSTNAME, hostname);
-
+		
 		SyncCollection.update(query, new BasicDBObject().append("$set", newRecord));
 	}
 
 	@Override
 	public void sync() {
 		for (LogFile logFile : logFiles) {
+			int pushedRecords = 0;
+			
+			if(logFile.getFiles() == null)
+				continue;
+			
 			LogFileIterator<String[]> iterator = logFile.iterator();
 			while(iterator.hasNext()) {
 				String[] entry = iterator.next();
 				String[] headers = logFile.getColumnNames();
 
 				String hostname = iterator.getCurrentHostname();
-				Date creationTime = LogFile.truncateMilis(iterator.getCurrentTimestamp());
-				String timestamp = LogFile.dateFormat.format(creationTime);
-
+				Date creationTime;
 				try {
-					if(LogFile.dateFormat.parse(timestamp).before(rangeStart) || LogFile.dateFormat.parse(timestamp).after(rangeFinish))
-						continue;
-				} catch (ParseException e) {
+					creationTime = LogFile.truncateMilis(iterator.getCurrentTimestamp());
+				} catch(Exception e) {
 					e.printStackTrace();
 					continue;
 				}
+				String timestamp = LogFile.dateFormat.format(creationTime);
+				
+				if(creationTime.before(rangeStart) || creationTime.after(rangeFinish))
+					continue;
 
 
 				BasicDBObject logFileEntry = new BasicDBObject(); 
 				for (int i = 0; i < entry.length; i++)
 					logFileEntry.append(headers[i], entry[i]);
 
-				try {
-					createRecord(timestamp, hostname, LogFile.dateFormat.parse(timestamp).getTime());
-				} catch (ParseException e) {
-					e.printStackTrace();
-					continue;
-				}
+				createRecord(timestamp, hostname, creationTime.getTime());
 
 				BasicDBObject record = new BasicDBObject();
-				
 				record.append(logFile.getLogName(), logFileEntry);
-
 				addToRecord(timestamp, hostname, record);
+				pushedRecords++;
 			}
+			System.out.println(pushedRecords + " records from " + logFile.getLogName());
 		}
 	}
 }
