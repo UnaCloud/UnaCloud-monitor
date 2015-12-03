@@ -36,7 +36,7 @@ public class PowerGadgetMonitor extends AbstractMonitor {
 	@Override
 	public void doMonitoring() throws Exception {		
 		fileName = recordPath+ID+SEPARATOR+df.format(new Date())+EXT;	
-		String[] cmdarray = {powerlogPath+exeName, "-resolution", ""+(frequency*1000), "-duration", ""+windowSizeTime, "-file ", fileName};
+		String[] cmdarray = {powerlogPath+exeName, "-resolution", ""+(frequency*1000), "-duration", ""+windowSizeTime, "-file", fileName};
 		LocalProcessExecutor.executeCommand(cmdarray);		
 	}
 

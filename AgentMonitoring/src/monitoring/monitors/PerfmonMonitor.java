@@ -33,21 +33,35 @@ public class PerfmonMonitor extends AbstractMonitor{
 
 	@Override
 	protected void doInitial() throws Exception {	
-		LocalProcessExecutor.executeCommand("logman stop "+counterName);
-		LocalProcessExecutor.executeCommand("logman delete "+counterName);
-		countersString = "";
-		for (String c : counters)countersString += ("\""+c+"\" ");		
+		String[] cmdarray = {"logman","stop",counterName};
+		LocalProcessExecutor.executeCommand(cmdarray);
+		
+		cmdarray[1] = "delete";
+		LocalProcessExecutor.executeCommand(cmdarray);
+		
+		countersString = "\"" + counters[0] + "\"";
+		
+		for (int i = 1; i < counters.length; i++) {
+			countersString += (" \""+counters[i]+"\"");		
+		}
+		
 		setLogFileForPickUp(ID);
 	}
 
 	@Override
 	protected void doMonitoring() throws Exception {
-		LocalProcessExecutor.executeCommand("logman create counter "+ counterName +" -c "+ countersString +"-si "
-				+ frequency +" -max "+ maxFileSizeMb +" -f csv -o \""+ (recordPath+ID+SEPARATOR+df.format(new Date())) +"\"");	
-		LocalProcessExecutor.executeCommand("logman start "+counterName);
+		String[] cmdarray = {"logman", "create", "counter", counterName, "-c", countersString, "-si", ""+frequency, "-max", ""+maxFileSizeMb, "-f", "csv", "-o", "\""+ (recordPath+ID+SEPARATOR+df.format(new Date())) +"\""};
+		LocalProcessExecutor.executeCommand(cmdarray);	
+		
+		String[] cmdarray2 = {"logman","start",counterName};
+		LocalProcessExecutor.executeCommand(cmdarray2);
 		Thread.sleep(windowSizeTime*1000);
-		LocalProcessExecutor.executeCommand("logman stop "+counterName);	
-		LocalProcessExecutor.executeCommand("logman delete "+counterName);
+		
+		cmdarray2[1] = "stop";
+		LocalProcessExecutor.executeCommand(cmdarray2);	
+		
+		cmdarray2[1] = "delete";
+		LocalProcessExecutor.executeCommand(cmdarray2);
 	}
 
 	@Override
