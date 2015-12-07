@@ -73,6 +73,7 @@ public class Control {
 								if(d.before(init)){
 									System.out.println("before init");
 									sleepUntilInit(init, d);
+									d = new Date();
 								}
 								controller.prepareAllServices();
 								controller.startServices();	
