@@ -11,13 +11,12 @@ SIGAR_HEADERS=UpTime,RamFree,RamUsed,...,Processes_Detail,Processes_General
 A continuación se define el significado de cada elemento:
 
 * **SERVICES**: Permite habilitar o deshabilitar un servicio de medición. Si se quiere habilitar la monitorización para algún elemento en especial se debe definir el valor **true** o **false**. Los elementos se separan utilizando ",". Los elementos posibles son:
-  * sigar
-  * openHardware
-  * perfmon
-  * powerGadget
+    - sigar
+    - openHardware
+    - perfmon
+    - powerGadget
 * **SIGAR_RECORD_PATH**: Define la ruta donde se guardarán los archivos de monitoreo de sigar.
 * **SIGAR_HEADERS**: Define los elementos a realizar monitoreo. Para más información consultar sección "Variables de Monitorización"
-
 
 ## Variables de Monitorización
 
@@ -38,9 +37,21 @@ A continuación se describen los elementos que pueden ser monitoreados.
 * **NetRXBytes**: Obtiene el total de bytes recibidos por la interface de red principal. Se debe tener en cuenta que si la interfaz se reinicia, la métrica comenzará desde cero. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getRxBytes())
 * **NetTxBytes**: Obtiene el total de bytes recibidos por la interface de red principal. Al igual que con los Bytes recibidos, si la interfaz se reinicia, la métrica comenzará desde cero. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getRxBytes())
 * **NetSpeed**: Obtiene la velocidad de la interfaz de red. Esta velocidad vienen dada en Bytes. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getSpeed())
-* **NetRXErrors**: Obtiene el número de paquetes recibidos con errores. 
-* **NetTxErrors**: Obtiene el número de paquetes transmitidos con errores.
-* **NetRxPackets**: Obtiene el número de paquetes recibidos. Equivalente a utilizar el comando netstat -s en Windows. La métrica se mide cuando la máquina se inicia.
-* **NetTxPackets**: Obtiene el número de paquetes transmitidos. Equivalente a utilizar el comando netstat -s en Windows. La métrica se mide cuando la máquina se inicia.
-* **Processes_Detail**: 
-* **Processes_General**: 
+* **NetRXErrors**: Obtiene el número de paquetes recibidos con errores. Equivalente a utilizar el comando netstat -s en Windows. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getRxErrors())
+* **NetTxErrors**: Obtiene el número de paquetes transmitidos con errores. Equivalente a utilizar el comando netstat -s en Windows. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getTxErrors())
+* **NetRxPackets**: Obtiene el número de paquetes recibidos. Equivalente a utilizar el comando netstat -s en Windows. La métrica se mide cuando la máquina se inicia. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getRxPackets())
+* **NetTxPackets**: Obtiene el número de paquetes transmitidos. Equivalente a utilizar el comando netstat -s en Windows. La métrica se mide cuando la máquina se inicia. [[Fuente]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/NetInterfaceStat.html#getTxPackets())
+* **Processes_Detail**: Se obtiene la siguiente información para cada proceso en ejecución:
+    - Porcentaje de CPU utilizada
+    - Memoria RAM utilizada
+    - Prioridad del proceso
+    - Procesador
+    - Estado del proceso
+    - Hilos del proceso
+    - Fecha en la que inició el proceso
+* **Processes_General**: Se obtiene la siguiente información de todos los procesos del sistema en el que se toma la medición.
+    - Procesos Idle
+    - Procesos Running
+    - Procesos Sleeping
+    - Procesos Stopped
+    - Procesos Zombie
