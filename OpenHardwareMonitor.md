@@ -17,25 +17,22 @@ A continuación se define el significado de cada elemento:
 A continuación se describen los elementos que pueden ser monitoreados por Open Hardware.
 
 * Tiempo: Tiempo en el que se tomó la medición. Formato: mm/dd/aaaa hh:mm:ss
-* Load CPU Core #1. Porcentaje de uso de CPU.
-* Load CPU Core #2. Porcentaje de uso de CPU.
-* Load CPU Total. Porcentaje de uso de CPU.
-* Temperatura CPU Core #1. En Celcius.
-* Temperatura CPU Core #2. En Celcius.
-* Clock CPU Core #1. En MHz.
-* Clock CPU Core #2. En MHz.
-* Bus Speed. En MHz.
-* Load Memoria RAM. En Porcentaje.
-* Memoria RAM utilizada. En GB.
-* Memoria RAM Disponible. En GB.
-* Temperatura GPU Core. En Celcius.
-* GPU Fan. En Porcentaje.
-* Clock GPU Core. En MHz.
-* Clock GPU Memory. En MHz.
-* Voltage GPU. En Voltios.
-* Load GPU Core. Porcentaje de uso de GPU.
-* HDD Temperature. En Celcius.
-* HDD Used Space. En Porcentaje.
-
+* CPU
+    - Reloj (Por Core). Medido en MHz.
+    - Temperatura (Por Core). En grados Celcius.
+    - Carga (Por Core y Total). La carga total es la sumatoria de la carga de cada core / el número de cores.
+    - Bus. Medido en MHz.
+* RAM
+    - Carga
+    - Datos (utilizada y disponible)
+* HDD 
+    - Temperatura. En grados Celcius.
+    - Espacio Utilizado
+* GPU
+    - Voltaje. En Voltios
+    - Reloj (Core y Memoria). En MHz.
+    - Temperatura
+    - Carga. Porcentaje de uso del dispositivo.
+    - Ventilador. Porcentaje respecto a las rpm del ventilador.
 
 
