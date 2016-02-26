@@ -11,23 +11,10 @@ UnaCloud consiste en 4 proyectos.
 
 El proyecto actualmente funciona utilizando cuatro herramientas las cuales realizan las mediciones.
 
-* Sigar 1.6.3
-* PowerGadget
-* OpenHardwareMonitor CPU
+* [Sigar v1.6.3](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/Sigar.md)
+* [Intel PowerGadget v3.0](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/Intel%20Power%20Gadget.md)
+* [Open Hardware Monitor v0.7.1 Beta](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/OpenHardwareMonitor.md)
 * Perfmon Log
-
-# Sigar
-
-Teniendo en cuenta la [documentación](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/Sigar.html):
-
-* **ProcCredName**: Información del usuario y grupo propietarios del proceso.
-* **ProcCred**: Información de los UID y GID que son propierarios del proceso.
-* **ProcMem**: Información de la memoria (resident, shared, virtual) utilizada por el proceso, ademas de otros valores de error.
-* **ProcState**: Información de un proceso en particular; en que estado (Running, Zombie, etc.), cual es el process id, los threads activos, el número del procesador donde corre, la prioridad, entre otros.
-* **ProcTime**: Información de tiempos de ejecución del proceso como por ejemplo hace cuanto corre.
-* **ProcCpu**: Información del consumo de CPU por el proceso: únicamente porcentaje de uso, y trae los valores del ProcTime.
-* **ProcExe**: Nos trae los nombres del directorio de trabajo del proceso y el nombre del ejecutable.
-* **ProcStat**: Este nos trae información del status de todos los procesos: cuantos corren, cuantos detenidos, cuantos demonios, cuantos zombies.
 
 # Instalación y Configuración
 
