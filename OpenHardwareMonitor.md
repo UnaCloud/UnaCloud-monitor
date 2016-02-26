@@ -1,6 +1,6 @@
 # Open Hardware Monitor
 
-El archivo config.properties permite habilitar el monitoreo utilizando [Open Hardware Monitor](http://openhardwaremonitor.org/). En este archivo se deben configurar las siguientes lineas.
+El archivo config.properties permite habilitar el monitoreo utilizando [Open Hardware Monitor](http://openhardwaremonitor.org/). Esta documentación fue escrita teniendo en cuenta la [documentación](http://openhardwaremonitor.org/documentation/) de OpenHardwareMonitor. En este archivo se deben configurar las siguientes lineas.
 
 ```
 OH_PATH=C:\\Monitoreo\\OpenHardwareMonitor\\
@@ -20,14 +20,14 @@ A continuación se describen los elementos que pueden ser monitoreados por Open 
 * CPU
     - Reloj (Por Core). Medido en MHz.
     - Temperatura (Por Core). En grados Celcius.
-    - Carga (Por Core y Total). La carga total es la sumatoria de la carga de cada core / el número de cores.
+    - Carga (Por Core y Total).
     - Bus. Medido en MHz.
 * RAM
     - Carga
     - Datos (utilizada y disponible)
 * HDD 
     - Temperatura. En grados Celcius.
-    - Espacio Utilizado
+    - Espacio Utilizado. En Kilobytes
 * GPU
     - Voltaje. En Voltios
     - Reloj (Core y Memoria). En MHz.
