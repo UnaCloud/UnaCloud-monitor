@@ -20,18 +20,18 @@ A continuación se describen los elementos que pueden ser monitoreados por Open 
 * CPU
     - Reloj (Por Core). Medido en MHz.
     - Temperatura (Por Core). En grados Celcius.
-    - Carga (Por Core y Total). La carga total es la sumatoria de la carga de cada core / el número de cores.
+    - Carga (Por Core y Total). La carga total es la sumatoria de la carga de cada core / el número de cores. La carga es medida en porcentaje.
     - Bus. Medido en MHz.
 * RAM
-    - Carga
-    - Datos (utilizada y disponible)
+    - Carga. Mide el porcentaje de uso de la RAM.
+    - Datos (utilizada y disponible). En GB.
 * HDD 
     - Temperatura. En grados Celcius.
-    - Espacio Utilizado
+    - Espacio Utilizado. Calcula el tamaño de todos los discos y obtiene el porcentaje de uso de este.
 * GPU
     - Voltaje. En Voltios
     - Reloj (Core y Memoria). En MHz.
-    - Temperatura
+    - Temperatura. En Celcius.
     - Carga. Porcentaje de uso del dispositivo.
     - Ventilador. Porcentaje respecto a las rpm del ventilador.
 

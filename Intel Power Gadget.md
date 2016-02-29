@@ -28,6 +28,16 @@ Se deben cumplir los siguientes requerimientos para el correcto funcionamiento d
 
 Por defecto PowerGadget monitoriza:
 
-* Frecuencia del procesador. En MHz
-* Energía promedio. En Wattz
-* Temperatura. En Celcius
+* System Time: Hora del sistema.
+* RDTSC: Time Stamp Counter.
+* Elapsed Time: Tiempo desde que comenzó la medición en segundos. Acumulativo.
+* CPU Frequency: Frecuencia en MHz del procesador.
+* Processor Power: En Watts.
+* Cumulative Processor Energy: En Joules.
+* Cumulative Processor Energy: En mWh.
+* IA Power(Watt): Watt.
+* Cumulative IA Energy: Joules.
+* Cumulative IA Energy: mWh.
+* [Package Temperature](http://superuser.com/questions/324284/what-is-meant-by-the-terms-cpu-core-die-and-package): Temperatura del procesador visto como un "paquete". En Celcius.
+* Package Hot: 
+* Package Power Limit: Watt.
