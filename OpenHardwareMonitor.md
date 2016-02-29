@@ -1,6 +1,6 @@
 # Open Hardware Monitor
 
-El archivo config.properties permite habilitar el monitoreo utilizando [Open Hardware Monitor](http://openhardwaremonitor.org/). En este archivo se deben configurar las siguientes lineas.
+El archivo config.properties permite habilitar el monitoreo utilizando [Open Hardware Monitor](http://openhardwaremonitor.org/). Esta documentación fue escrita teniendo en cuenta la [documentación](http://openhardwaremonitor.org/documentation/) de OpenHardwareMonitor. En este archivo se deben configurar las siguientes lineas.
 
 ```
 OH_PATH=C:\\Monitoreo\\OpenHardwareMonitor\\
