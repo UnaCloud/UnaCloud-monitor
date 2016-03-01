@@ -14,7 +14,7 @@ El proyecto actualmente funciona utilizando cuatro herramientas las cuales reali
 * [Sigar v1.6.3](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/Sigar.md)
 * [Intel PowerGadget v3.0](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/Intel%20Power%20Gadget.md)
 * [Open Hardware Monitor v0.7.1 Beta](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/OpenHardwareMonitor.md)
-* Perfmon Log
+* [Perfmon](https://github.com/UnaCloud/UnaCloudMonitor/blob/manre_develop/Perfmon.md)
 
 # Instalación y Configuración
 
