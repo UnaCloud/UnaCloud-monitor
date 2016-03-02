@@ -29,15 +29,15 @@ Se deben cumplir los siguientes requerimientos para el correcto funcionamiento d
 Por defecto PowerGadget monitoriza:
 
 * System Time: Hora del sistema.
-* RDTSC: Time Stamp Counter.
+* RDTSC: Timestamp desde que se inició el sistema.
 * Elapsed Time: Tiempo desde que comenzó la medición en segundos. Acumulativo.
 * CPU Frequency: Frecuencia en MHz del procesador.
-* Processor Power: En Watts.
+* Processor Power: Consumo energético total en Watts del procesador. Según [el sitio](https://software.intel.com/en-us/articles/intel-power-gadget-20) esta medición es el total del consumo, es decir, Processor Energy = IA Energy + GT Energy + Others.
 * Cumulative Processor Energy: En Joules.
 * Cumulative Processor Energy: En mWh.
-* IA Power(Watt): Watt.
+* IA Power: Watts.
 * Cumulative IA Energy: Joules.
 * Cumulative IA Energy: mWh.
-* [Package Temperature](http://superuser.com/questions/324284/what-is-meant-by-the-terms-cpu-core-die-and-package): Temperatura del procesador visto como un "paquete". En Celcius.
-* Package Hot: 
-* Package Power Limit: Watt.
+* [Package Temperature](http://superuser.com/questions/324284/what-is-meant-by-the-terms-cpu-core-die-and-package): Permite conocer la temperatura del procesador en Celsius.
+* [Package Hot](https://software.intel.com/en-us/articles/intel-power-gadget-20): Permite conocer cuándo se sobrepasó la máxima temperatura del procesador/package. (0 si es falso, 1 si es verdadero).
+* Package Power Limit: Permite conocer el límite en Watts del procesador/package.
