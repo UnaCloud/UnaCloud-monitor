@@ -22,6 +22,7 @@ A continuación se define el significado de cada elemento:
 
 A continuación se describen los elementos que pueden ser monitoreados.
 
+* **Timestamp**: Obtiene la fecha y hora en que se realizó la medición. Ej. 01/03/2016  01:23:46 p.m.
 * **Username**: Permite conocer el usuario activo de Windows. Utiliza el comando "cmd.exe /c quser"
 * **UpTime**: Obtiene el tiempo desde que la máquina se inició en segundos. [[Fuente Sigar]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/Uptime.html#getUptime())
 * **RamFree**: Obtiene el total de memoria RAM disponible en Bytes. UnaCloud regresa la información en Megabytes. Equivalente administrador de tareas de Windows. [[Fuente Sigar]](http://cpansearch.perl.org/src/DOUGM/hyperic-sigar-1.6.3-src/docs/javadoc/org/hyperic/sigar/Mem.html#getFree())
