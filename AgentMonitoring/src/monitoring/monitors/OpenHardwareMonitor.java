@@ -42,11 +42,29 @@ public class OpenHardwareMonitor extends AbstractMonitor{
 	@Override
 	protected void doMonitoring() throws Exception {
 		createDateTempFile();
-		LocalProcessExecutor.createProcess(recordPath+openHardwareProcess);
+		System.out.println(createProcess(recordPath+openHardwareProcess));
 		Thread.sleep(windowSizeTime*1000);
 		LocalProcessExecutor.killProcess(openHardwareProcess);	
 	}
-
+	
+	 @SuppressWarnings("unused")
+	public static String createProcess(String process){
+    	System.out.println("Exec process: " + process);
+    	ProcessBuilder pb = new ProcessBuilder(process);
+    	Process pr = null;
+    	try {
+			pr = pb.start();
+		} catch (IOException e) {
+			System.out.println("Error: " + e.getMessage());
+			e.printStackTrace();
+			if(pr!=null)return pr.getErrorStream().toString();
+			return e.getMessage();
+		}
+    	System.out.println("1: " + pr.getErrorStream().toString());
+    	System.out.println("2: " + pr.getInputStream().toString());
+    	return pr.getInputStream().toString();
+    }
+	 
 	@Override
 	protected void doFinal() throws Exception {
 		setLogFileForPickUp(LOG);
